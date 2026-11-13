@@ -6,7 +6,7 @@ export function statsToPhysics(s = {}) {
   return {
     speed: 300 + v('speed') * 45, // 345 .. 525 px/s
     jump: 720 + v('jump') * 48, // 768 .. 960 px/s
-    kick: 930 + v('kick') * 105, // 1035 .. 1455 px/s
+    kick: 860 + v('kick') * 80, // 940 .. 1260 px/s
     size: 0.9 + v('size') * 0.05, // 0.95 .. 1.15 head scale
   };
 }

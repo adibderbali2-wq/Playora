@@ -109,8 +109,11 @@ function subStep(ball, h, game) {
     const nearX = clamp(ball.x, wall.x, wall.x + wall.w), nearY = clamp(ball.y, wall.y, wall.y + wall.h);
     collideCircle(ball, nearX, nearY, 0.01, 0, 0, 0.7);
   }
-  // players
-  for (const p of game.players) collideBallPlayer(ball, p, game);
+  // players — alternate the order every sub-step so neither side always gets the last touch
+  game.flip = !game.flip;
+  const ps = game.players;
+  if (game.flip) for (let i = 0; i < ps.length; i++) collideBallPlayer(ball, ps[i], game);
+  else for (let i = ps.length - 1; i >= 0; i--) collideBallPlayer(ball, ps[i], game);
   // a player can shove the ball into the floor or a wall: keep it inside the stadium
   if (ball.y + ball.r > GROUND) { ball.y = GROUND - ball.r; if (ball.vy > 0) ball.vy = -ball.vy * PHYS.groundBounce; }
   if (ball.y - ball.r < 0) { ball.y = ball.r; if (ball.vy < 0) ball.vy = -ball.vy * PHYS.ceilingBounce; }
@@ -139,13 +142,15 @@ function collideBallPlayer(ball, p, game) {
   let v = collideCircle(ball, q.headX, q.headY, q.headR, p.vx, p.vy, PHYS.headBounce);
   if (v) {
     if (v > 1) {
-      if (p.vy < -100 && ball.vy > -380) ball.vy = Math.min(ball.vy, -380);
-      ball.vx += p.facing * 40;
+      // headers are directional: the ball leaves toward the opponent's goal, faster when you jump into it
+      const f = p.facing;
+      if (ball.vx * f < 260) ball.vx = ball.vx * 0.3 + f * (240 + Math.abs(p.vx) * 0.3 + (p.vy < -100 ? 110 : 0));
+      if (p.vy < -100 && ball.vy > -420) ball.vy = Math.min(ball.vy, -420);
       touch(ball, p, game, 'head', v);
     }
   }
   v = collideCircle(ball, q.bodyX, q.bodyY, q.bodyR, p.vx, p.vy, PHYS.bodyBounce);
-  if (v > 1) touch(ball, p, game, 'body', v);
+  if (v > 1) { if (ball.vx * p.facing < 120) ball.vx = ball.vx * 0.5 + p.facing * 170; touch(ball, p, game, 'body', v); }
   // foot: an active kick launches the ball, otherwise it's a soft dribble surface
   const kicking = p.kick.t > 0 && p.kick.t < 0.16 && !p.kick.hit;
   const fdx = ball.x - q.footX, fdy = ball.y - q.footY;
@@ -154,7 +159,7 @@ function collideBallPlayer(ball, p, game) {
     kickBall(ball, p, q, game);
   } else {
     v = collideCircle(ball, q.footX, q.footY, q.footR, p.vx, p.vy, PHYS.footBounce);
-    if (v > 1) touch(ball, p, game, 'foot', v);
+    if (v > 1) { if (ball.vx * p.facing < 100) ball.vx = ball.vx * 0.5 + p.facing * 140; touch(ball, p, game, 'foot', v); }
   }
 }
 
@@ -177,7 +182,7 @@ export function kickBall(ball, p, q, game) {
   ball.vx = Math.cos(ang) * power * dir + p.vx * 0.3;
   ball.vy = -Math.sin(ang) * power + Math.min(0, p.vy * 0.2);
   ball.spin = -dir * 14;
-  ball.x = q.footX + dir * (ball.r + q.footR) * 0.7;
+  ball.x = clamp(q.footX + dir * (ball.r + q.footR) * 0.7, ball.r, W - ball.r);
   ball.lastTouch = p.id;
   game.emit('kick', { x: ball.x, y: ball.y, power, player: p.id });
   game.onKick && game.onKick(ball, p);
@@ -189,10 +194,10 @@ export function stepPlayer(p, dt, game) {
   const stunned = p.frozen > 0 || p.stun > 0;
   let dir = stunned ? 0 : (inp.right ? 1 : 0) - (inp.left ? 1 : 0);
   if (p.reversed > 0) dir = -dir;
-  const speed = p.speed * (p.mods.speedMul || 1);
+  const speed = p.speed * (p.mods.speedMul || 1) * (p.aiSpeed || 1);
   p.vx = approach(p.vx, dir * speed, (p.onGround ? 5200 : 3200) * dt);
   if (!stunned && p.jumpBuffer > 0 && p.onGround) {
-    p.vy = -p.jumpPower * (p.mods.jumpMul || 1);
+    p.vy = -p.jumpPower * (p.mods.jumpMul || 1) * (p.aiJump || 1);
     p.onGround = false; p.jumpBuffer = 0;
     game.emit('jump', { player: p.id, x: p.x });
   }

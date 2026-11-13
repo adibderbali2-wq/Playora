@@ -6,10 +6,10 @@ export const STEP = 1 / 120; // fixed physics timestep (seconds)
 
 // Goals. The left goal's mouth spans x = 0..GOAL_LINE; the right goal mirrors it.
 export const GOAL_LINE = 96; // ball must fully cross this line (and be under the bar) to score
-export const CROSSBAR_Y = 402; // underside of the crossbar
+export const CROSSBAR_Y = 428; // underside of the crossbar
 export const BAR_R = 7; // crossbar thickness (radius of its capsule)
 // The crossbar/roof capsule slopes slightly toward the pitch so a ball never rests on top of the goal.
-export const ROOF = { x0: 0, y0: 386, x1: 104, y1: CROSSBAR_Y - BAR_R };
+export const ROOF = { x0: 0, y0: 412, x1: 104, y1: CROSSBAR_Y - BAR_R };
 
 export const PHYS = {
   gravity: 1550, // ball gravity
@@ -19,7 +19,7 @@ export const PHYS = {
   groundBounce: 0.66,
   wallBounce: 0.78,
   ceilingBounce: 0.6,
-  rollFriction: 1.1, // per second, while rolling on the ground
+  rollFriction: 1.9, // per second, while rolling on the ground
   airDrag: 0.04,
   headBounce: 0.62,
   bodyBounce: 0.42,
