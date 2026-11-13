@@ -1,6 +1,6 @@
 # PLAYORA — Claude notes
 
-Static browser-games site. Plain HTML/CSS/JS, Node ≥18 build script, **no npm deps**. Hosted on Cloudflare Pages (build `npm run build`, output `dist/`).
+Static browser-games site. Plain HTML/CSS/JS, Node ≥18 build script, **no npm deps**. Hosted on Cloudflare Workers (static assets) at https://playora.adibderbali2.workers.dev, auto-deployed from GitHub `main` (build `npm run build`, output `dist/`).
 
 ## Token rules
 - Don't read `dist/` (generated), `Claude outputs/`, fonts/images, or other games' `index.html` unless the task is about them.
@@ -11,6 +11,7 @@ Static browser-games site. Plain HTML/CSS/JS, Node ≥18 build script, **no npm 
 - `games/games.json` — catalog (single source of truth for every game page, card, category, search, sitemap).
 - `games/<id>/` — one game: `index.html` + `thumb.svg|webp|png` (+ `assets/`). Folders starting `_` or `.` are not published.
 - `games/_template/` — starter game (scales, keyboard/mouse/touch).
+- `src/*` root files (favicon, Google verification `google*.html`, ads.txt) are copied to the site root as-is. `robots.txt`/`sitemap.xml` are generated from `siteUrl`: don't hand-write them.
 - `site.config.json` — site name/URL, categories, ads/analytics toggles.
 - `src/assets/{css,js}` — site design. `src/content/*.html` — About/Contact/Privacy/Terms.
 - `scripts/` — `build.mjs`, `check-links.mjs`, `serve.mjs`, `guard-games.mjs`.
@@ -33,11 +34,11 @@ Coming-soon → playable: add `index.html`, flip `status`, update `added`, re-lo
 ## Protection (don't bypass)
 - `games/.protected.json` snapshots every game. `npm run guard` fails if a protected game is removed from the catalog, loses its folder/thumbnail/index.html, or is demoted from playable; warns on content changes.
 - Git pre-commit hook (`.githooks/pre-commit`) runs the guard. Enable per clone: `git config core.hooksPath .githooks`.
-- `.claude/settings.json` asks before editing existing playable games and denies `rm -rf games*` / `git push`.
+- `.claude/settings.json` asks before editing existing playable games and denies `rm -rf games*`; asks before `git push`.
 - Re-lock only after the user confirms an intended change to an existing game.
 
 ## Conventions
 - Don't edit existing games or site design unless asked. Never edit `dist/`.
 - No frameworks, no CDNs, no npm packages; libraries (e.g. Phaser) go inside the game's own `assets/`.
 - Games run in an iframe; report failure with `parent.postMessage({ playora: 'error', message }, '*')`.
-- No GitHub remote yet; don't add one or push without asking.
+- Remote: `origin` = GitHub, pushing `main` deploys live. Push only when the user asks.

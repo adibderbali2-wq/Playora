@@ -241,8 +241,22 @@ const navItems = [
   { href: '/about/', label: 'About', key: 'about' },
 ];
 
+// Fits whole sentences (then whole words) of text plus suffix into ~160 chars for <meta name="description">.
+function seoDescription(text, suffix = '', max = 160) {
+  const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+  let out = '';
+  for (const s of sentences) { if ((out + s).trim().length + suffix.length > max) break; out += s; }
+  out = out.trim();
+  if (!out) {
+    const words = text.split(/s+/);
+    while (words.length && words.join(' ').length + 1 + suffix.length > max) words.pop();
+    out = words.join(' ').replace(/[,;:]$/, '') + '…';
+  }
+  return out + suffix;
+}
+
 function layout({ title, description, canonical, body, active = '', ogImage, ogType = 'website', scripts = [], jsonLd, noindex = false, bodyClass = '' }) {
-  const fullTitle = title ? `${title} | ${site.name}` : `${site.name} - ${site.tagline} Free Online Games`;
+  const fullTitle = title ? `${title} | ${site.name}` : `${site.name} - Free Browser Games, No Download, No Sign-up`;
   const desc = description || site.description;
   const canon = SITE_URL + (canonical || '/');
   const image = SITE_URL + (ogImage || '/assets/img/og-image.jpg');
@@ -695,8 +709,8 @@ function buildGamePages() {
     write(
       `play/${g.id}/index.html`,
       layout({
-        title: g.playable ? `${g.title} - Play free online` : `${g.title} (coming soon)`,
-        description: g.description.slice(0, 155),
+        title: g.playable ? `${g.title} - Free Online ${catBySlug[g.category].name} Game` : `${g.title} - ${catBySlug[g.category].name} Game (Coming Soon)`,
+        description: seoDescription(g.description, g.playable ? ' Play free in your browser, no download, no sign-up.' : ''),
         canonical: g.pageUrl,
         ogImage: fs.existsSync(path.join(ROOT, `games/${g.id}/og.png`)) ? `/games/${g.id}/og.png` : undefined,
         body,

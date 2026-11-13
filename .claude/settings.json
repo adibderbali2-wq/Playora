@@ -3,10 +3,10 @@
     "deny": [
       "Bash(rm -rf games*)",
       "Bash(rm -r games*)",
-      "Bash(git push*)",
       "Bash(git remote add*)"
     ],
     "ask": [
+      "Bash(git push*)",
       "Edit(/games/comet-catcher/**)",
       "Edit(/games/brick-blitz/**)",
       "Edit(/games/glyph-match/**)",
