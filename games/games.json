@@ -2,6 +2,20 @@
   "_help": "PLAYORA game catalog. To add a game: 1) put its files in games/<id>/ (index.html + thumb.svg or thumb.webp) 2) add an entry below 3) push to GitHub. See ADDING-GAMES.md for every field.",
   "games": [
     {
+      "id": "head-cup",
+      "title": "Head Cup",
+      "description": "Big heads, big goals. Pick one of 14 original players and a national team, choose one of 14 wild skills like Fireball, Freeze or Giant Keeper, and play 1 vs CPU, 2 players on one keyboard, or 2 vs 2.",
+      "controls": "Player 1: A / D move, W jump, S or F kick, Q skill. Player 2: arrow keys to move and jump, 0 or Enter kick, Right Shift skill. Gamepads and touch buttons also work. Esc pauses.",
+      "category": "sports",
+      "tags": ["football", "soccer", "head soccer", "2 players", "vs cpu", "skills"],
+      "status": "playable",
+      "featured": true,
+      "popular": true,
+      "added": "2026-11-14",
+      "aspectRatio": "16:9",
+      "mobileFriendly": true
+    },
+    {
       "id": "chaos-duel",
       "title": "Chaos Duel",
       "description": "Two players, one keyboard, one arena gone wild. Pick Bruno the tank or Zippy the speedster and fight best of three while Chaos Events flip the rules: low gravity, ice, meteor rain, giant fists and a shrinking arena.",

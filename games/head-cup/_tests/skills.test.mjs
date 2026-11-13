@@ -133,6 +133,9 @@ export function skillsTests() {
     fire(g, a);
     ok(g.ball.r > PHYS.ballRadius * 1.7, 'BIG BALL grows the ball');
     run(g, 6.5); ok(g.ball.r === PHYS.ballRadius, 'ball shrinks back after 6 s');
+    const t2 = setup('bigBall'); fire(t2.g, t2.a); for (const p of t2.g.players) p.x = W / 2;
+    const bb = t2.g.ball; bb.x = 320; bb.y = GROUND - bb.r; bb.vx = -1300; bb.vy = 0; run(t2.g, 1.2);
+    ok(t2.g.score[1] === 1, 'a Big Ball can still score');
   }
 
   section('Skills reset after a goal');

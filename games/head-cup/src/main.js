@@ -65,7 +65,7 @@ async function boot() {
     render(alpha, dt) {
       ui.frame(dt);
       const g = ui.game || demo;
-      renderer.draw(g, ui.game ? fx : idleFx, alpha, { dt, t, goalGlow: ui.goalGlow, hud: !!ui.game });
+      renderer.draw(g, ui.game ? fx : idleFx, alpha, { dt, t, goalGlow: ui.goalGlow, hud: !!ui.game, touch: !document.getElementById('touch').hidden });
     },
   });
   ui.show('title', false);

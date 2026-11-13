@@ -369,7 +369,7 @@ export class Renderer {
       const st = game.skills.get(p); if (!st || !st.def) continue;
       const n = side[p.team]++;
       const r = p.controller === 'ai' ? 24 : 32;
-      const x = p.team === 0 ? 56 + n * 78 : W - 56 - n * 78, y = H - 52;
+      const x = p.team === 0 ? 56 + n * 78 : W - 56 - n * 78, y = ui.touch ? 150 : H - 52;
       this.drawSkillButton(ctx, st, x, y, r, p);
     }
   }

@@ -1,6 +1,10 @@
 {
   "_help": "Snapshot of protected games. Update only after an intended change: npm run guard -- --lock",
   "games": {
+    "head-cup": {
+      "status": "playable",
+      "hash": "d77a0b8e81b0e129"
+    },
     "chaos-duel": {
       "status": "playable",
       "hash": "a41f7f1bf5d980c9"

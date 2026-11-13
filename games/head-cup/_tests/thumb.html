@@ -1,0 +1,37 @@
+<!doctype html><meta charset="utf-8"><title>thumb</title>
+<body style="margin:0;background:#000"><canvas id="c" width="1280" height="720" style="width:640px"></canvas>
+<script type="module">
+import { parseRoster } from '../src/characters.js';
+import { Renderer } from '../src/renderer.js';
+import { Effects } from '../src/effects.js';
+import { Game } from '../src/game.js';
+import { TEAM_BY_ID } from '../src/teams.js';
+await document.fonts.load('900 60px Unbounded').catch(() => {});
+const roster = parseRoster(await (await fetch('../characters.json')).json());
+const ch = (id) => roster.find((c) => c.id === id);
+const canvas = document.getElementById('c');
+const r = new Renderer(canvas); r.resize(1280, 720, 1);
+const fx = new Effects();
+const g = new Game({ teams: [
+  { flag: 'tunisia', kit: TEAM_BY_ID.tunisia.kit, players: [{ char: ch('captain-carthage'), controller: 'kb1', skill: 'fireball' }] },
+  { flag: 'brazil', kit: TEAM_BY_ID.brazil.kit, players: [{ char: ch('samba-king'), controller: 'kb2', skill: 'speedBoost' }] } ], time: 60 });
+for (let i = 0; i < 240; i++) g.update(1 / 120);
+const [a, b] = g.players;
+a.x = a.px = 520; a.y = a.py = 520; a.vy = -300; a.onGround = false; a.legAngle = 1.2;
+b.x = b.px = 780; b.y = b.py = 612; b.emotion = 'effort';
+const ball = g.ball; ball.x = ball.px = 640; ball.y = ball.py = 330; ball.fire = 1; ball.angle = 0.6;
+for (let i = 0; i < 14; i++) fx.trail(ball.x - 20 - i * 9, ball.y + i * 2, i % 2 ? '#ffd23d' : '#ff5a1f', 'fire', 18 - i * 0.6);
+g.phase = 'play'; a.tag = b.tag = '';
+r.draw(g, fx, 1, { dt: 0, t: (k) => k, hud: false });
+const x = canvas.getContext('2d');
+// title
+x.save(); x.translate(640, 130); x.rotate(-0.04); x.textAlign = 'center'; x.textBaseline = 'middle'; x.lineJoin = 'round';
+x.font = '900 150px Unbounded, sans-serif';
+x.lineWidth = 34; x.strokeStyle = '#1d1230'; x.strokeText('HEAD CUP', 0, 0);
+const gr = x.createLinearGradient(0, -70, 0, 70); gr.addColorStop(0, '#fff6b0'); gr.addColorStop(1, '#ffb020');
+x.fillStyle = gr; x.fillText('HEAD CUP', 0, 0);
+x.restore();
+const out = document.createElement('canvas'); out.width = 640; out.height = 360;
+out.getContext('2d').drawImage(canvas, 0, 0, 640, 360);
+out.toBlob(async (blob) => { const res = await fetch('/_save?name=thumb.webp', { method: 'POST', body: blob }); document.title = await res.text() + ' ' + blob.size; }, 'image/webp', 0.85);
+</script>

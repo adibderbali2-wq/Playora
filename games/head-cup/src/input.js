@@ -78,7 +78,7 @@ export class Input {
     const active = new Map();
     root.addEventListener('pointerdown', (e) => {
       const el = e.target.closest('[data-a]'); if (!el) return;
-      e.preventDefault(); el.setPointerCapture?.(e.pointerId);
+      e.preventDefault(); try { el.setPointerCapture(e.pointerId); } catch { /* synthetic pointer */ }
       const c = el.dataset.c, a = el.dataset.a;
       active.set(e.pointerId, [c, a, el]);
       this.touch[c][a] = (this.touch[c][a] || 0) + 1; el.classList.add('on');

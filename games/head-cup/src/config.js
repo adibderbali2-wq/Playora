@@ -14,7 +14,7 @@ export const ROOF = { x0: 0, y0: 412, x1: 104, y1: CROSSBAR_Y - BAR_R };
 export const PHYS = {
   gravity: 1550, // ball gravity
   playerGravity: 2300, // snappy jumps
-  ballRadius: 21,
+  ballRadius: 26,
   maxBallSpeed: 2500,
   groundBounce: 0.66,
   wallBounce: 0.78,

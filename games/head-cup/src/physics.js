@@ -247,7 +247,9 @@ export function separatePlayers(players) {
 /** Which team scored, if the ball is fully inside a goal: 1 = right team scored on the left goal, 0 = left team scored on the right. */
 export function goalCheck(ball) {
   if (ball.y - ball.r * 0.2 < CROSSBAR_Y + BAR_R) return -1;
-  if (ball.x + ball.r < GOAL_LINE) return 1;
-  if (ball.x - ball.r > W - GOAL_LINE) return 0;
+  // the ball must be over the line by a full normal ball width (works for the Big Ball too)
+  const depth = Math.min(ball.r, PHYS.ballRadius);
+  if (ball.x + depth < GOAL_LINE) return 1;
+  if (ball.x - depth > W - GOAL_LINE) return 0;
   return -1;
 }
