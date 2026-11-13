@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Comet Catcher - PLAYORA</title>
+<meta name="robots" content="noindex">
+<style>
+  html, body { margin: 0; height: 100%; background: #07060f; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; }
+  canvas { display: block; width: 100%; height: 100%; cursor: none; }
+</style>
+</head>
+<body>
+<canvas id="c" aria-label="Comet Catcher game"></canvas>
+<script>
+/* Comet Catcher - an original PLAYORA game. Plain canvas, no libraries. */
+(() => {
+  const W = 960, H = 540;
+  const cv = document.getElementById('c');
+  const ctx = cv.getContext('2d');
+  let scale = 1, ox = 0, oy = 0;
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = innerWidth * dpr; cv.height = innerHeight * dpr;
+    scale = Math.min(innerWidth / W, innerHeight / H);
+    ox = (innerWidth - W * scale) / 2; oy = (innerHeight - H * scale) / 2;
+    ctx.setTransform(dpr * scale, 0, 0, dpr * scale, dpr * ox, dpr * oy);
+  }
+  addEventListener('resize', resize); resize();
+
+  const store = { get: (k) => { try { return +localStorage.getItem(k) || 0; } catch { return 0; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
+  let best = store.get('playora.comet-catcher.best');
+
+  const stars = Array.from({ length: 90 }, () => ({ x: Math.random() * W, y: Math.random() * H, s: Math.random() * 1.6 + 0.3, v: Math.random() * 20 + 10 }));
+  let state = 'title'; // title | play | paused | over
+  let ship, items, particles, score, lives, t, spawnT, speed, keys = {}, pointerX = null, flash = 0;
+
+  function reset() {
+    ship = { x: W / 2, y: H - 60, w: 70, vx: 0 };
+    items = []; particles = []; score = 0; lives = 3; t = 0; spawnT = 0; speed = 1; flash = 0;
+  }
+  reset();
+
+  function spawn() {
+    const rock = Math.random() < Math.min(0.28 + t * 0.004, 0.5);
+    items.push({ x: 30 + Math.random() * (W - 60), y: -20, r: rock ? 16 + Math.random() * 10 : 11, vy: (140 + Math.random() * 80) * speed, rock, rot: Math.random() * 6, gold: !rock && Math.random() < 0.1 });
+  }
+  function burst(x, y, color, n = 14) {
+    for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, s = 60 + Math.random() * 180; particles.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 0.6, color }); }
+  }
+
+  function update(dt) {
+    for (const s of stars) { s.y += s.v * dt * (state === 'play' ? speed : 0.4); if (s.y > H) { s.y = 0; s.x = Math.random() * W; } }
+    for (const p of particles) { p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt; }
+    particles = particles.filter((p) => p.life > 0);
+    if (state !== 'play') return;
+
+    t += dt; speed = 1 + t / 45; flash = Math.max(0, flash - dt);
+    const acc = 2600, max = 620;
+    if (pointerX !== null) {
+      ship.x += (pointerX - ship.x) * Math.min(1, dt * 14);
+    } else {
+      const dir = (keys.ArrowRight || keys.KeyD ? 1 : 0) - (keys.ArrowLeft || keys.KeyA ? 1 : 0);
+      ship.vx += dir * acc * dt; ship.vx *= dir ? 1 : Math.pow(0.0005, dt);
+      ship.vx = Math.max(-max, Math.min(max, ship.vx)); ship.x += ship.vx * dt;
+    }
+    ship.x = Math.max(ship.w / 2, Math.min(W - ship.w / 2, ship.x));
+
+    spawnT -= dt;
+    if (spawnT <= 0) { spawn(); spawnT = Math.max(0.28, 0.85 - t * 0.008); }
+
+    for (const it of items) {
+      it.y += it.vy * dt; it.rot += dt * 2;
+      if (!it.hit && it.y + it.r > ship.y - 14 && it.y - it.r < ship.y + 14 && Math.abs(it.x - ship.x) < ship.w / 2 + it.r * 0.6) {
+        it.hit = true;
+        if (it.rock) { lives--; flash = 0.35; burst(it.x, it.y, '#ff5c6c', 22); if (lives <= 0) gameOver(); }
+        else { score += it.gold ? 50 : 10; burst(it.x, it.y, it.gold ? '#ffd36b' : '#c8ff4d'); }
+      }
+    }
+    items = items.filter((it) => !it.hit && it.y < H + 40);
+  }
+
+  function gameOver() {
+    state = 'over';
+    if (score > best) { best = score; store.set('playora.comet-catcher.best', best); }
+  }
+
+  function drawShip(x, y) {
+    ctx.save(); ctx.translate(x, y);
+    ctx.shadowColor = '#3ddcff'; ctx.shadowBlur = 20;
+    const g = ctx.createLinearGradient(-35, 0, 35, 0); g.addColorStop(0, '#3ddcff'); g.addColorStop(1, '#c8ff4d');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.moveTo(-35, 10); ctx.quadraticCurveTo(0, -30, 35, 10); ctx.quadraticCurveTo(0, 2, -35, 10); ctx.fill();
+    ctx.shadowBlur = 0; ctx.fillStyle = '#0e0c1d'; ctx.beginPath(); ctx.ellipse(0, -4, 9, 6, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(255,92,138,' + (0.6 + Math.random() * 0.4) + ')'; ctx.beginPath(); ctx.moveTo(-10, 10); ctx.lineTo(0, 22 + Math.random() * 8); ctx.lineTo(10, 10); ctx.fill();
+    ctx.restore();
+  }
+  function text(str, x, y, size, color = '#f4f2ff', align = 'center', weight = 800) {
+    ctx.font = `${weight} ${size}px system-ui, -apple-system, Segoe UI, sans-serif`; ctx.textAlign = align; ctx.fillStyle = color; ctx.fillText(str, x, y);
+  }
+
+  function draw() {
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#07060f'; ctx.fillRect(0, 0, cv.width, cv.height); ctx.restore();
+    const bg = ctx.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#120f2b'); bg.addColorStop(1, '#1c1240');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    for (const s of stars) { ctx.fillStyle = `rgba(255,255,255,${0.3 + s.s / 3})`; ctx.fillRect(s.x, s.y, s.s, s.s * (state === 'play' ? 3 : 1)); }
+
+    for (const it of items) {
+      ctx.save(); ctx.translate(it.x, it.y);
+      if (it.rock) {
+        ctx.rotate(it.rot); ctx.fillStyle = '#5b5677'; ctx.strokeStyle = '#8a85b0'; ctx.lineWidth = 2;
+        ctx.beginPath(); for (let i = 0; i < 7; i++) { const a = (i / 7) * Math.PI * 2, r = it.r * (0.75 + ((i * 37) % 10) / 30); ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); } ctx.closePath(); ctx.fill(); ctx.stroke();
+      } else {
+        const c = it.gold ? '#ffd36b' : '#c8ff4d';
+        const tail = ctx.createLinearGradient(0, -48, 0, 0); tail.addColorStop(0, 'rgba(61,220,255,0)'); tail.addColorStop(1, it.gold ? 'rgba(255,211,107,.7)' : 'rgba(61,220,255,.7)');
+        ctx.fillStyle = tail; ctx.beginPath(); ctx.moveTo(-it.r * 0.8, 0); ctx.lineTo(0, -50); ctx.lineTo(it.r * 0.8, 0); ctx.fill();
+        ctx.shadowColor = c; ctx.shadowBlur = 18; ctx.fillStyle = c; ctx.beginPath(); ctx.arc(0, 0, it.r, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.restore();
+    }
+    for (const p of particles) { ctx.globalAlpha = Math.max(0, p.life / 0.6); ctx.fillStyle = p.color; ctx.fillRect(p.x - 2, p.y - 2, 4, 4); }
+    ctx.globalAlpha = 1;
+    if (state !== 'title') drawShip(ship.x, ship.y);
+    if (flash > 0) { ctx.fillStyle = `rgba(255,92,108,${flash})`; ctx.fillRect(0, 0, W, H); }
+
+    if (state === 'play' || state === 'paused') {
+      text('SCORE ' + score, 24, 40, 22, '#f4f2ff', 'left');
+      text('BEST ' + best, 24, 66, 14, '#b3aed6', 'left', 700);
+      for (let i = 0; i < 3; i++) { ctx.fillStyle = i < lives ? '#ff5c8a' : 'rgba(255,255,255,.15)'; ctx.beginPath(); ctx.arc(W - 30 - i * 26, 34, 8, 0, Math.PI * 2); ctx.fill(); }
+    }
+    const overlay = (title, sub, sub2) => {
+      ctx.fillStyle = 'rgba(7,6,15,.6)'; ctx.fillRect(0, 0, W, H);
+      text(title, W / 2, H / 2 - 30, 54); text(sub, W / 2, H / 2 + 20, 20, '#c8ff4d', 'center', 700);
+      if (sub2) text(sub2, W / 2, H / 2 + 56, 16, '#b3aed6', 'center', 600);
+    };
+    if (state === 'title') overlay('COMET CATCHER', 'Press Space or tap to start', 'Catch comets ✦ dodge rocks ✦ best: ' + best);
+    if (state === 'paused') overlay('PAUSED', 'Press P or tap to continue');
+    if (state === 'over') overlay('GAME OVER', 'Score ' + score + (score >= best && score > 0 ? '  ·  New best!' : '  ·  Best ' + best), 'Press Space or tap to play again');
+  }
+
+  let last = performance.now();
+  function loop(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    update(dt); draw(); requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  function primary() {
+    if (state === 'title' || state === 'over') { reset(); state = 'play'; }
+    else if (state === 'paused') state = 'play';
+  }
+  addEventListener('keydown', (e) => {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) e.preventDefault();
+    keys[e.code] = true; pointerX = null;
+    if (e.code === 'Space' || e.code === 'Enter') primary();
+    if (e.code === 'KeyP') state = state === 'play' ? 'paused' : state === 'paused' ? 'play' : state;
+  });
+  addEventListener('keyup', (e) => { keys[e.code] = false; });
+  const toGame = (cx) => (cx - ox) / scale;
+  cv.addEventListener('pointerdown', (e) => { cv.setPointerCapture(e.pointerId); if (state !== 'play') primary(); pointerX = toGame(e.clientX); });
+  cv.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse' || e.buttons) pointerX = toGame(e.clientX); });
+  addEventListener('blur', () => { if (state === 'play') state = 'paused'; });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && state === 'play') state = 'paused'; });
+})();
+</script>
+</body>
+</html>

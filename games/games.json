@@ -1,0 +1,105 @@
+{
+  "_help": "PLAYORA game catalog. To add a game: 1) put its files in games/<id>/ (index.html + thumb.svg or thumb.webp) 2) add an entry below 3) push to GitHub. See ADDING-GAMES.md for every field.",
+  "games": [
+    {
+      "id": "comet-catcher",
+      "title": "Comet Catcher",
+      "description": "Steer your little star-ship across the night sky, scoop up glowing comets and dodge the falling space rocks. The longer you survive, the faster the sky gets. How high can your score climb?",
+      "controls": "Move with the arrow keys or A / D. On a phone or tablet, drag your finger left and right. Catch comets for points, avoid the grey rocks. You have 3 lives. Press P to pause.",
+      "category": "arcade",
+      "tags": ["space", "dodge", "high score", "one button"],
+      "status": "playable",
+      "featured": true,
+      "popular": true,
+      "added": "2026-11-12",
+      "aspectRatio": "16:9",
+      "mobileFriendly": true
+    },
+    {
+      "id": "brick-blitz",
+      "title": "Brick Blitz",
+      "description": "Bounce the energy ball, smash every neon brick and keep it alive with your paddle. Each level adds tougher bricks that take more than one hit. Clear the board to move on.",
+      "controls": "Move the paddle with the mouse, the arrow keys, or by dragging on touch screens. Press Space or tap to launch the ball. Press P to pause.",
+      "category": "action",
+      "tags": ["bricks", "ball", "neon", "levels"],
+      "status": "playable",
+      "featured": true,
+      "popular": true,
+      "added": "2026-11-11",
+      "aspectRatio": "4:3",
+      "mobileFriendly": true
+    },
+    {
+      "id": "glyph-match",
+      "title": "Glyph Match",
+      "description": "Flip the cards and find every matching pair of glowing glyphs. Fewer moves and a faster time mean more stars. Three board sizes, from a relaxed warm-up to a real memory workout.",
+      "controls": "Click or tap a card to flip it. Find two matching cards to keep them face up. Match all pairs to win.",
+      "category": "puzzle",
+      "tags": ["memory", "cards", "brain", "relaxing"],
+      "status": "playable",
+      "featured": true,
+      "popular": true,
+      "added": "2026-11-13",
+      "aspectRatio": "4:3",
+      "mobileFriendly": true
+    },
+    {
+      "id": "paddle-duel",
+      "title": "Paddle Duel",
+      "description": "A fast two-player duel on one screen. Grab a friend, take a side and keep the puck out of your goal. First to 7 points wins. Playing alone? Switch on the computer opponent.",
+      "controls": "Left player: W / S. Right player: arrow Up / Down. On touch screens, each player drags on their own half of the screen. Press 1 for one player vs computer, 2 for two players.",
+      "category": "multiplayer",
+      "tags": ["2 players", "versus", "same screen", "duel"],
+      "status": "playable",
+      "featured": false,
+      "popular": true,
+      "added": "2026-11-10",
+      "aspectRatio": "16:9",
+      "mobileFriendly": true
+    },
+    {
+      "id": "turbo-lanes",
+      "title": "Turbo Lanes",
+      "description": "Weave through traffic on a neon highway, collect boost cells and chase the perfect run. Coming soon to PLAYORA.",
+      "category": "racing",
+      "tags": ["cars", "speed", "highway"],
+      "status": "coming-soon",
+      "featured": true,
+      "popular": false,
+      "added": "2026-11-09"
+    },
+    {
+      "id": "lantern-path",
+      "title": "Lantern Path",
+      "description": "Guide a small lantern spirit through a forest of shadows, solving light puzzles to find the way home. Coming soon to PLAYORA.",
+      "category": "adventure",
+      "tags": ["exploration", "story", "light"],
+      "status": "coming-soon",
+      "featured": false,
+      "popular": false,
+      "added": "2026-11-08"
+    },
+    {
+      "id": "goal-rush",
+      "title": "Goal Rush",
+      "description": "Line up your shot, beat the keeper and climb the tournament ladder in quick penalty showdowns. Coming soon to PLAYORA.",
+      "category": "sports",
+      "tags": ["football", "soccer", "penalties"],
+      "status": "coming-soon",
+      "featured": false,
+      "popular": false,
+      "added": "2026-11-07"
+    },
+    {
+      "id": "tower-tactics",
+      "title": "Tower Tactics",
+      "description": "Build and upgrade towers to hold the line against waves of mischievous robots. Coming soon to PLAYORA.",
+      "category": "strategy",
+      "tags": ["tower defense", "waves", "upgrades"],
+      "status": "coming-soon",
+      "featured": false,
+      "popular": false,
+      "added": "2026-11-06"
+    }
+  ]
+}

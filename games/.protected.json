@@ -1,0 +1,37 @@
+{
+  "_help": "Snapshot of protected games. Update only after an intended change: npm run guard -- --lock",
+  "games": {
+    "comet-catcher": {
+      "status": "playable",
+      "hash": "90a0c674de063f13"
+    },
+    "brick-blitz": {
+      "status": "playable",
+      "hash": "fddaf6abce3164f7"
+    },
+    "glyph-match": {
+      "status": "playable",
+      "hash": "3b91b6f8451f75af"
+    },
+    "paddle-duel": {
+      "status": "playable",
+      "hash": "d597d86c077c7ad7"
+    },
+    "turbo-lanes": {
+      "status": "coming-soon",
+      "hash": "9c0b490f8406391e"
+    },
+    "lantern-path": {
+      "status": "coming-soon",
+      "hash": "35b41ea8d590be64"
+    },
+    "goal-rush": {
+      "status": "coming-soon",
+      "hash": "6c42968f266eff47"
+    },
+    "tower-tactics": {
+      "status": "coming-soon",
+      "hash": "c9a10f91d61c2c25"
+    }
+  }
+}

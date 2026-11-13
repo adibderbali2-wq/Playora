@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(rm -rf games*)",
+      "Bash(rm -r games*)",
+      "Bash(git push*)",
+      "Bash(git remote add*)"
+    ],
+    "ask": [
+      "Edit(/games/comet-catcher/**)",
+      "Edit(/games/brick-blitz/**)",
+      "Edit(/games/glyph-match/**)",
+      "Edit(/games/paddle-duel/**)",
+      "Write(/games/comet-catcher/**)",
+      "Write(/games/brick-blitz/**)",
+      "Write(/games/glyph-match/**)",
+      "Write(/games/paddle-duel/**)",
+      "Edit(/games/.protected.json)",
+      "Bash(rm *games/*)",
+      "Bash(git reset --hard*)",
+      "Bash(git clean*)",
+      "Bash(npm run guard -- --lock*)"
+    ]
+  }
+}

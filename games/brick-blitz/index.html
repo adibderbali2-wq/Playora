@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Brick Blitz - PLAYORA</title>
+<meta name="robots" content="noindex">
+<style>
+  html, body { margin: 0; height: 100%; background: #07060f; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; }
+  canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<canvas id="c" aria-label="Brick Blitz game"></canvas>
+<script>
+/* Brick Blitz - an original PLAYORA game. Plain canvas, no libraries. */
+(() => {
+  const W = 800, H = 600;
+  const cv = document.getElementById('c');
+  const ctx = cv.getContext('2d');
+  let scale = 1, ox = 0, oy = 0;
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = innerWidth * dpr; cv.height = innerHeight * dpr;
+    scale = Math.min(innerWidth / W, innerHeight / H);
+    ox = (innerWidth - W * scale) / 2; oy = (innerHeight - H * scale) / 2;
+    ctx.setTransform(dpr * scale, 0, 0, dpr * scale, dpr * ox, dpr * oy);
+  }
+  addEventListener('resize', resize); resize();
+  const store = { get: (k) => { try { return +localStorage.getItem(k) || 0; } catch { return 0; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
+  let best = store.get('playora.brick-blitz.best');
+
+  const COLORS = ['#ff5c6c', '#ff8a4d', '#ffd36b', '#c8ff4d', '#3ddcff', '#b98bff'];
+  const COLS = 10, BW = 68, BH = 24, GAP = 8, TOP = 70;
+  const LEFT = (W - (COLS * BW + (COLS - 1) * GAP)) / 2;
+
+  let state = 'title', level, score, lives, paddle, ball, bricks, particles = [], keys = {}, pointerX = null;
+
+  function makeLevel(n) {
+    bricks = [];
+    const rows = Math.min(4 + n, 8);
+    for (let r = 0; r < rows; r++) for (let c = 0; c < COLS; c++) {
+      if (n % 2 === 0 && (r + c) % 5 === 0 && r > 0) continue; // pattern gaps on even levels
+      const hp = r < Math.floor((n - 1) / 2) + 1 && n > 1 ? 2 : 1;
+      bricks.push({ x: LEFT + c * (BW + GAP), y: TOP + r * (BH + GAP), hp, max: hp, color: COLORS[r % COLORS.length] });
+    }
+  }
+  function resetBall() { ball = { x: paddle.x, y: paddle.y - 14, r: 8, vx: 0, vy: 0, stuck: true }; }
+  function newGame() { level = 1; score = 0; lives = 3; paddle = { x: W / 2, y: H - 40, w: 110, h: 14 }; makeLevel(level); resetBall(); }
+  newGame();
+
+  function launch() {
+    if (!ball.stuck) return;
+    const sp = 380 + level * 25, a = -Math.PI / 2 + (Math.random() - 0.5) * 0.6;
+    ball.vx = Math.cos(a) * sp; ball.vy = Math.sin(a) * sp; ball.stuck = false;
+  }
+  function burst(x, y, color) { for (let i = 0; i < 12; i++) { const a = Math.random() * 6.28, s = 50 + Math.random() * 160; particles.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 0.5, color }); } }
+
+  function update(dt) {
+    for (const p of particles) { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 400 * dt; p.life -= dt; }
+    particles = particles.filter((p) => p.life > 0);
+    if (state !== 'play') return;
+
+    if (pointerX !== null) paddle.x += (pointerX - paddle.x) * Math.min(1, dt * 20);
+    else paddle.x += ((keys.ArrowRight || keys.KeyD ? 1 : 0) - (keys.ArrowLeft || keys.KeyA ? 1 : 0)) * 620 * dt;
+    paddle.x = Math.max(paddle.w / 2, Math.min(W - paddle.w / 2, paddle.x));
+
+    if (ball.stuck) { ball.x = paddle.x; ball.y = paddle.y - 14; return; }
+    const steps = 3;
+    for (let s = 0; s < steps; s++) {
+      ball.x += ball.vx * dt / steps; ball.y += ball.vy * dt / steps;
+      if (ball.x < ball.r) { ball.x = ball.r; ball.vx = Math.abs(ball.vx); }
+      if (ball.x > W - ball.r) { ball.x = W - ball.r; ball.vx = -Math.abs(ball.vx); }
+      if (ball.y < ball.r) { ball.y = ball.r; ball.vy = Math.abs(ball.vy); }
+      // paddle
+      if (ball.vy > 0 && ball.y + ball.r >= paddle.y - paddle.h / 2 && ball.y < paddle.y + paddle.h && Math.abs(ball.x - paddle.x) < paddle.w / 2 + ball.r) {
+        const hit = (ball.x - paddle.x) / (paddle.w / 2);
+        const sp = Math.hypot(ball.vx, ball.vy) * 1.01;
+        const a = -Math.PI / 2 + hit * 1.05;
+        ball.vx = Math.cos(a) * sp; ball.vy = Math.sin(a) * sp; ball.y = paddle.y - paddle.h / 2 - ball.r;
+      }
+      // bricks
+      for (const b of bricks) {
+        if (b.hp <= 0) continue;
+        const cx = Math.max(b.x, Math.min(ball.x, b.x + BW)), cy = Math.max(b.y, Math.min(ball.y, b.y + BH));
+        if ((ball.x - cx) ** 2 + (ball.y - cy) ** 2 <= ball.r * ball.r) {
+          const overlapX = Math.min(ball.x + ball.r - b.x, b.x + BW - (ball.x - ball.r));
+          const overlapY = Math.min(ball.y + ball.r - b.y, b.y + BH - (ball.y - ball.r));
+          if (overlapX < overlapY) ball.vx = -ball.vx; else ball.vy = -ball.vy;
+          b.hp--; score += b.hp > 0 ? 5 : 10;
+          if (b.hp <= 0) burst(b.x + BW / 2, b.y + BH / 2, b.color);
+          break;
+        }
+      }
+    }
+    if (ball.y > H + 20) {
+      lives--;
+      if (lives <= 0) { state = 'over'; if (score > best) { best = score; store.set('playora.brick-blitz.best', best); } }
+      else resetBall();
+    }
+    if (bricks.every((b) => b.hp <= 0)) { state = 'levelup'; score += 100; }
+  }
+
+  function rr(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h); }
+  function text(str, x, y, size, color = '#f4f2ff', align = 'center', weight = 800) { ctx.font = `${weight} ${size}px system-ui, -apple-system, Segoe UI, sans-serif`; ctx.textAlign = align; ctx.fillStyle = color; ctx.fillText(str, x, y); }
+
+  function draw() {
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#07060f'; ctx.fillRect(0, 0, cv.width, cv.height); ctx.restore();
+    const bg = ctx.createLinearGradient(0, 0, W, H); bg.addColorStop(0, '#16123a'); bg.addColorStop(1, '#0e0c1d');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = 'rgba(255,255,255,.035)'; ctx.lineWidth = 1;
+    for (let x = 0; x <= W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y <= H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+    for (const b of bricks) {
+      if (b.hp <= 0) continue;
+      ctx.shadowColor = b.color; ctx.shadowBlur = 12; ctx.fillStyle = b.color; ctx.globalAlpha = b.hp < b.max ? 0.55 : 1;
+      rr(b.x, b.y, BW, BH, 6); ctx.fill();
+      ctx.shadowBlur = 0; ctx.globalAlpha = 1;
+      if (b.max > 1 && b.hp === b.max) { ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; rr(b.x + 3, b.y + 3, BW - 6, BH - 6, 4); ctx.stroke(); }
+    }
+    for (const p of particles) { ctx.globalAlpha = p.life * 2; ctx.fillStyle = p.color; ctx.fillRect(p.x - 2, p.y - 2, 4, 4); }
+    ctx.globalAlpha = 1;
+
+    ctx.shadowColor = '#c8ff4d'; ctx.shadowBlur = 18; ctx.fillStyle = '#c8ff4d';
+    rr(paddle.x - paddle.w / 2, paddle.y - paddle.h / 2, paddle.w, paddle.h, 7); ctx.fill();
+    ctx.shadowColor = '#3ddcff'; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+
+    text('SCORE ' + score, 20, 36, 20, '#f4f2ff', 'left');
+    text('LEVEL ' + level, W / 2, 36, 16, '#b3aed6', 'center', 700);
+    for (let i = 0; i < lives; i++) { ctx.fillStyle = '#ff5c8a'; ctx.beginPath(); ctx.arc(W - 24 - i * 22, 30, 7, 0, Math.PI * 2); ctx.fill(); }
+    if (state === 'play' && ball.stuck) text('Press Space or tap to launch', W / 2, H - 80, 16, '#b3aed6', 'center', 600);
+
+    const overlay = (a, b, c) => { ctx.fillStyle = 'rgba(7,6,15,.65)'; ctx.fillRect(0, 0, W, H); text(a, W / 2, H / 2 - 24, 50); text(b, W / 2, H / 2 + 22, 19, '#c8ff4d', 'center', 700); if (c) text(c, W / 2, H / 2 + 56, 15, '#b3aed6', 'center', 600); };
+    if (state === 'title') overlay('BRICK BLITZ', 'Press Space or tap to start', 'Best score: ' + best);
+    if (state === 'paused') overlay('PAUSED', 'Press P or tap to continue');
+    if (state === 'levelup') overlay('LEVEL ' + level + ' CLEAR!', 'Press Space or tap for level ' + (level + 1), '+100 bonus');
+    if (state === 'over') overlay('GAME OVER', 'Score ' + score + (score >= best && score > 0 ? ' · New best!' : ' · Best ' + best), 'Press Space or tap to play again');
+  }
+
+  let last = performance.now();
+  (function loop(now) { const dt = Math.min(0.033, (now - last) / 1000); last = now; update(dt); draw(); requestAnimationFrame(loop); })(last);
+
+  function primary() {
+    if (state === 'title' || state === 'over') { newGame(); state = 'play'; }
+    else if (state === 'levelup') { level++; makeLevel(level); paddle.w = Math.max(80, 110 - level * 4); resetBall(); state = 'play'; }
+    else if (state === 'paused') state = 'play';
+    else if (state === 'play') launch();
+  }
+  addEventListener('keydown', (e) => {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Space'].includes(e.code)) e.preventDefault();
+    keys[e.code] = true; if (e.code.startsWith('Arrow') || e.code === 'KeyA' || e.code === 'KeyD') pointerX = null;
+    if (e.code === 'Space' || e.code === 'Enter') primary();
+    if (e.code === 'KeyP') state = state === 'play' ? 'paused' : state === 'paused' ? 'play' : state;
+  });
+  addEventListener('keyup', (e) => { keys[e.code] = false; });
+  const toGame = (cx) => (cx - ox) / scale;
+  cv.addEventListener('pointerdown', (e) => { cv.setPointerCapture(e.pointerId); pointerX = toGame(e.clientX); primary(); });
+  cv.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse' || e.buttons) pointerX = toGame(e.clientX); });
+  addEventListener('blur', () => { if (state === 'play') state = 'paused'; });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && state === 'play') state = 'paused'; });
+})();
+</script>
+</body>
+</html>

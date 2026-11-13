@@ -1,0 +1,38 @@
+{
+  "name": "PLAYORA",
+  "tagline": "Play more. Have fun.",
+  "description": "PLAYORA is a free browser gaming platform. Play action, puzzle, arcade, racing and more games instantly on your computer, tablet or phone. No downloads, no sign-up.",
+  "siteUrl": "https://playora.pages.dev",
+  "contactEmail": "",
+  "lang": "en",
+  "themeColor": "#0E0C1D",
+  "launchYear": 2026,
+
+  "analytics": {
+    "enabled": false,
+    "googleAnalyticsId": ""
+  },
+
+  "ads": {
+    "enabled": false,
+    "adsenseClientId": "",
+    "slots": {
+      "home-top": "",
+      "home-middle": "",
+      "category-top": "",
+      "game-sidebar": "",
+      "game-below": ""
+    }
+  },
+
+  "categories": [
+    { "slug": "action",      "name": "Action",      "color": "#FF5C6C", "icon": "bolt",    "blurb": "Fast reflexes, big moments. Dodge, dash and blast your way through." },
+    { "slug": "adventure",   "name": "Adventure",   "color": "#FFB547", "icon": "compass", "blurb": "Explore new worlds, uncover secrets and go on epic quests." },
+    { "slug": "racing",      "name": "Racing",      "color": "#3DDCFF", "icon": "flag",    "blurb": "Hit the gas. Drift, boost and race to the finish line." },
+    { "slug": "puzzle",      "name": "Puzzle",      "color": "#B98BFF", "icon": "puzzle",  "blurb": "Train your brain with clever puzzles, matching and logic games." },
+    { "slug": "arcade",      "name": "Arcade",      "color": "#C8FF4D", "icon": "joystick","blurb": "Classic quick-play fun. One more try, one more high score." },
+    { "slug": "sports",      "name": "Sports",      "color": "#4DFFA6", "icon": "ball",    "blurb": "Score goals, sink shots and compete like a pro." },
+    { "slug": "strategy",    "name": "Strategy",    "color": "#FF8A4D", "icon": "castle",  "blurb": "Plan ahead, build smart and outthink your opponents." },
+    { "slug": "multiplayer", "name": "Multiplayer", "color": "#FF5CC8", "icon": "users",   "blurb": "Play with friends on the same screen or challenge each other." }
+  ]
+}

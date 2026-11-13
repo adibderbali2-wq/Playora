@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glyph Match - PLAYORA</title>
+<meta name="robots" content="noindex">
+<style>
+  :root { --bg: #0e0c1d; --card: #231f42; --line: rgba(255,255,255,.1); --lime: #c8ff4d; --text: #f4f2ff; --muted: #b3aed6; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: radial-gradient(800px 500px at 50% 0%, #2a1f5c, transparent 70%), var(--bg);
+    color: var(--text); font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2vmin; padding: 2vmin; overflow: hidden;
+    user-select: none; -webkit-user-select: none;
+  }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; width: min(100%, var(--bw, 640px)); }
+  h1 { margin: 0; font-size: clamp(16px, 3.2vmin, 26px); letter-spacing: .04em; }
+  h1 span { color: var(--lime); }
+  .stats { display: flex; gap: 14px; font-weight: 700; font-size: clamp(13px, 2.4vmin, 16px); color: var(--muted); }
+  .stats b { color: var(--text); }
+  .sizes { display: flex; gap: 6px; }
+  .sizes button, .btn { font: inherit; font-weight: 700; font-size: 14px; padding: 8px 14px; min-height: 40px; border-radius: 999px; border: 1px solid var(--line); background: #1a1733; color: var(--text); cursor: pointer; }
+  .sizes button[aria-pressed="true"] { background: var(--lime); color: var(--bg); border-color: var(--lime); }
+  .btn--primary { background: var(--lime); color: var(--bg); border-color: var(--lime); }
+  .board { display: grid; gap: 1.6vmin; width: min(100%, var(--bw, 640px)); }
+  .tile { perspective: 800px; aspect-ratio: 1; border: 0; padding: 0; background: none; cursor: pointer; border-radius: 14px; }
+  .tile:focus-visible { outline: 3px solid var(--lime); outline-offset: 3px; }
+  .inner { position: relative; width: 100%; height: 100%; transition: transform .35s cubic-bezier(.2,.8,.2,1); transform-style: preserve-3d; }
+  .tile.up .inner, .tile.done .inner { transform: rotateY(180deg); }
+  .face { position: absolute; inset: 0; border-radius: 14px; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: grid; place-items: center; border: 1px solid var(--line); }
+  .back { background: linear-gradient(145deg, #2d2852, #1a1733); }
+  .back::after { content: ""; width: 34%; aspect-ratio: 1; border-radius: 30%; border: 3px solid rgba(200,255,77,.35); transform: rotate(45deg); }
+  .front { background: #13112a; transform: rotateY(180deg); }
+  .front svg { width: 58%; height: 58%; filter: drop-shadow(0 0 10px currentColor); }
+  .tile.done .front { border-color: currentColor; background: #17142f; }
+  .tile.done { animation: pop .4s ease; }
+  .tile.shake .inner { animation: shake .35s ease; }
+  @keyframes pop { 50% { transform: scale(1.08); } }
+  @keyframes shake { 25% { transform: rotateY(180deg) translateX(-5px); } 75% { transform: rotateY(180deg) translateX(5px); } }
+  .win { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(7,6,15,.75); backdrop-filter: blur(4px); }
+  .win[hidden] { display: none; }
+  .win > div { text-align: center; padding: 28px 32px; border-radius: 22px; background: #1a1733; border: 1px solid var(--line); }
+  .win h2 { margin: 0 0 6px; font-size: 30px; }
+  .win .stars { font-size: 34px; color: #ffd36b; letter-spacing: 6px; margin: 6px 0 10px; }
+  .win p { color: var(--muted); margin: 0 0 18px; }
+  @media (prefers-reduced-motion: reduce) { .inner { transition: none; } .tile.done, .tile.shake .inner { animation: none; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>GLYPH <span>MATCH</span></h1>
+  <div class="stats" aria-live="polite"><span>Moves <b id="moves">0</b></span><span>Time <b id="time">0:00</b></span><span>Pairs <b id="pairs">0/0</b></span></div>
+  <div class="sizes" role="group" aria-label="Board size">
+    <button type="button" data-size="6">Easy</button>
+    <button type="button" data-size="8">Normal</button>
+    <button type="button" data-size="12">Hard</button>
+  </div>
+</header>
+<main class="board" id="board" aria-label="Cards"></main>
+<div class="win" id="win" hidden role="dialog" aria-modal="true" aria-labelledby="win-title">
+  <div>
+    <h2 id="win-title">All matched!</h2>
+    <div class="stars" id="stars"></div>
+    <p id="win-text"></p>
+    <button class="btn btn--primary" type="button" id="again">Play again</button>
+  </div>
+</div>
+<script>
+/* Glyph Match - an original PLAYORA game. */
+(() => {
+  const GLYPHS = [
+    ['#c8ff4d', '<circle cx="12" cy="12" r="8"/>'],
+    ['#3ddcff', '<rect x="5" y="5" width="14" height="14" rx="2"/>'],
+    ['#ff5c8a', '<path d="M12 3 21 20H3Z"/>'],
+    ['#ffd36b', '<path d="m12 2 3 7 7 .6-5.3 4.7 1.6 7.2L12 17.8 5.7 21.5l1.6-7.2L2 9.6 9 9Z"/>'],
+    ['#b98bff', '<path d="M12 2 22 12 12 22 2 12Z"/>'],
+    ['#4dffa6', '<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6Z"/>'],
+    ['#ff8a4d', '<path d="M12 2 20.7 7v10L12 22l-8.7-5V7Z"/>'],
+    ['#3ddcff', '<path d="M15 3a9 9 0 1 0 6 15A8 8 0 0 1 15 3Z"/>'],
+    ['#ff5c6c', '<path d="M12 21C5 16 2 12.5 2 8.5A4.5 4.5 0 0 1 12 6a4.5 4.5 0 0 1 10 2.5C22 12.5 19 16 12 21Z"/>'],
+    ['#c8ff4d', '<path d="M13 2 4 14h7l-1 8 9-12h-7Z"/>'],
+    ['#ff5cc8', '<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="4"/>'],
+    ['#ffd36b', '<path d="M3 15c3-6 6-6 9 0s6 6 9 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M3 8c3-6 6-6 9 0s6 6 9 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>'],
+  ];
+  const board = document.getElementById('board');
+  const $ = (id) => document.getElementById(id);
+  const sizeBtns = [...document.querySelectorAll('[data-size]')];
+  let pairs = 8, first = null, lock = false, moves = 0, found = 0, start = 0, tick = null;
+  const store = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
+  pairs = +(store.get('playora.glyph-match.size') || 8);
+
+  const fmt = (s) => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  const layout = () => {
+    const cols = pairs === 6 ? 4 : pairs === 8 ? 4 : 6;
+    const rows = (pairs * 2) / cols;
+    const avail = Math.min(innerWidth * 0.96, (innerHeight - 110) * (cols / rows));
+    board.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    document.documentElement.style.setProperty('--bw', Math.max(260, avail) + 'px');
+  };
+
+  function newGame() {
+    clearInterval(tick); tick = null; first = null; lock = false; moves = 0; found = 0; start = 0;
+    $('moves').textContent = 0; $('time').textContent = '0:00'; $('pairs').textContent = `0/${pairs}`; $('win').hidden = true;
+    sizeBtns.forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.size === pairs)));
+    const deck = GLYPHS.slice(0, pairs).flatMap((g, i) => [i, i]);
+    for (let i = deck.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [deck[i], deck[j]] = [deck[j], deck[i]]; }
+    board.innerHTML = deck.map((g, i) => `<button class="tile" type="button" data-g="${g}" aria-label="Hidden card ${i + 1}" style="color:${GLYPHS[g][0]}">
+      <span class="inner"><span class="face back"></span><span class="face front"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${GLYPHS[g][1]}</svg></span></span></button>`).join('');
+    layout();
+  }
+
+  board.addEventListener('click', (e) => {
+    const t = e.target.closest('.tile');
+    if (!t || lock || t === first || t.classList.contains('done')) return;
+    if (!tick) { start = Date.now(); tick = setInterval(() => { $('time').textContent = fmt(Math.floor((Date.now() - start) / 1000)); }, 500); }
+    t.classList.add('up'); t.setAttribute('aria-label', 'Card showing glyph ' + (+t.dataset.g + 1));
+    if (!first) { first = t; return; }
+    moves++; $('moves').textContent = moves;
+    if (first.dataset.g === t.dataset.g) {
+      [first, t].forEach((x) => { x.classList.add('done'); x.setAttribute('aria-label', 'Matched glyph ' + (+x.dataset.g + 1)); });
+      first = null; found++; $('pairs').textContent = `${found}/${pairs}`;
+      if (found === pairs) win();
+    } else {
+      lock = true; const a = first; first = null;
+      setTimeout(() => { [a, t].forEach((x) => { x.classList.add('shake'); }); }, 350);
+      setTimeout(() => { [a, t].forEach((x) => { x.classList.remove('up', 'shake'); x.setAttribute('aria-label', 'Hidden card'); }); lock = false; }, 900);
+    }
+  });
+
+  function win() {
+    clearInterval(tick);
+    const secs = Math.floor((Date.now() - start) / 1000);
+    const ratio = moves / pairs;
+    const stars = ratio <= 1.5 ? 3 : ratio <= 2.2 ? 2 : 1;
+    const key = 'playora.glyph-match.best.' + pairs;
+    const prev = +(store.get(key) || 0);
+    const isBest = !prev || moves < prev;
+    if (isBest) store.set(key, moves);
+    $('stars').textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+    $('win-text').textContent = `${moves} moves in ${fmt(secs)}. ${isBest ? 'New best for this size!' : 'Best: ' + prev + ' moves.'}`;
+    setTimeout(() => { $('win').hidden = false; $('again').focus(); }, 450);
+  }
+
+  sizeBtns.forEach((b) => b.addEventListener('click', () => { pairs = +b.dataset.size; store.set('playora.glyph-match.size', pairs); newGame(); }));
+  $('again').addEventListener('click', newGame);
+  addEventListener('resize', layout);
+  newGame();
+})();
+</script>
+</body>
+</html>

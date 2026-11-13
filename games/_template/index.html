@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>My New Game - PLAYORA</title>
+<meta name="robots" content="noindex">
+<style>
+  /* The game fills the PLAYORA player box. Keep these rules. */
+  html, body { margin: 0; height: 100%; background: #07060f; overflow: hidden; touch-action: none; user-select: none; }
+  canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<script>
+/*
+  PLAYORA game starter (plain canvas, no libraries).
+  - Draw in a fixed 960 x 540 world; it scales to any screen automatically.
+  - Supports keyboard, mouse and touch through pointer events.
+  - Load images/sounds from ./assets/ (e.g. "assets/player.png").
+  - If your game hits an error it can't recover from, tell PLAYORA:
+      parent.postMessage({ playora: 'error', message: 'Could not load level' }, '*');
+*/
+const W = 960, H = 540;
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+let scale = 1, ox = 0, oy = 0;
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = innerWidth * dpr; canvas.height = innerHeight * dpr;
+  scale = Math.min(innerWidth / W, innerHeight / H);
+  ox = (innerWidth - W * scale) / 2; oy = (innerHeight - H * scale) / 2;
+  ctx.setTransform(dpr * scale, 0, 0, dpr * scale, dpr * ox, dpr * oy);
+}
+addEventListener('resize', resize); resize();
+
+const player = { x: W / 2, y: H / 2 };
+const keys = {};
+addEventListener('keydown', (e) => { keys[e.code] = true; if (e.code.startsWith('Arrow') || e.code === 'Space') e.preventDefault(); });
+addEventListener('keyup', (e) => { keys[e.code] = false; });
+canvas.addEventListener('pointerdown', (e) => { player.x = (e.clientX - ox) / scale; player.y = (e.clientY - oy) / scale; });
+
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  const sp = 300 * dt;
+  if (keys.ArrowLeft) player.x -= sp; if (keys.ArrowRight) player.x += sp;
+  if (keys.ArrowUp) player.y -= sp;   if (keys.ArrowDown) player.y += sp;
+
+  ctx.fillStyle = '#13112a'; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#c8ff4d'; ctx.beginPath(); ctx.arc(player.x, player.y, 24, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#f4f2ff'; ctx.font = '700 22px system-ui'; ctx.textAlign = 'center';
+  ctx.fillText('Your game goes here. Use the arrow keys or tap.', W / 2, 60);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

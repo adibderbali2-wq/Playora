@@ -1,0 +1,16 @@
+{
+  "name": "playora",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PLAYORA - free browser games. Play more. Have fun.",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "start": "node scripts/build.mjs && node scripts/serve.mjs",
+    "check": "node scripts/guard-games.mjs && node scripts/check-links.mjs",
+    "guard": "node scripts/guard-games.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
