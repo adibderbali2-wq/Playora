@@ -1,0 +1,75 @@
+{
+  "_help": "HEAD CUP roster. Stats go from 1 to 5 (speed, jump, kick, size). 'look' describes the head drawn in code. To use your own picture instead, put a square PNG in assets/heads/ and set \"image\": \"assets/heads/your-file.png\". See README.md.",
+  "characters": [
+    {
+      "id": "samba-king", "name": "Samba King", "skill": "speedBoost",
+      "stats": { "speed": 5, "jump": 4, "kick": 3, "size": 2 },
+      "look": { "skin": "#8d5524", "face": "round", "hair": { "style": "afro", "color": "#1e1410" }, "beard": { "style": "none" }, "brows": "normal", "eyes": "#3b2414", "nose": "round", "mouth": "grin", "accessory": { "type": "headband", "color": "#ffd500" } }
+    },
+    {
+      "id": "iron-keeper", "name": "Iron Keeper", "skill": "giantKeeper",
+      "stats": { "speed": 2, "jump": 3, "kick": 4, "size": 5 },
+      "look": { "skin": "#e0ac69", "face": "square", "hair": { "style": "buzz", "color": "#5a3a22" }, "beard": { "style": "full", "color": "#5a3a22" }, "brows": "angry", "eyes": "#3a5a7a", "nose": "big", "mouth": "smirk", "accessory": { "type": "none" } }
+    },
+    {
+      "id": "desert-fox", "name": "Desert Fox", "skill": "teleport",
+      "stats": { "speed": 4, "jump": 3, "kick": 4, "size": 3 },
+      "look": { "skin": "#c99064", "face": "oval", "hair": { "style": "slick", "color": "#141414" }, "beard": { "style": "stubble", "color": "#2a1d14" }, "brows": "normal", "eyes": "#2b1a0e", "nose": "normal", "mouth": "smirk", "accessory": { "type": "sunglasses", "color": "#1a1a1a" } }
+    },
+    {
+      "id": "viking", "name": "Viking", "skill": "megaStrength",
+      "stats": { "speed": 2, "jump": 3, "kick": 5, "size": 4 },
+      "look": { "skin": "#f1c27d", "face": "square", "hair": { "style": "long", "color": "#e8c15a" }, "beard": { "style": "braided", "color": "#c8702a" }, "brows": "angry", "eyes": "#2e6aa8", "nose": "big", "mouth": "open", "accessory": { "type": "viking", "color": "#9aa4b0" } }
+    },
+    {
+      "id": "ninja", "name": "Ninja", "skill": "ghostBall",
+      "stats": { "speed": 5, "jump": 5, "kick": 2, "size": 2 },
+      "look": { "skin": "#e8b98a", "face": "oval", "hair": { "style": "none", "color": "#000" }, "beard": { "style": "none" }, "brows": "angry", "eyes": "#1d1d1d", "nose": "small", "mouth": "smirk", "accessory": { "type": "ninja", "color": "#20222b", "color2": "#d8263a" } }
+    },
+    {
+      "id": "pharaoh", "name": "Pharaoh", "skill": "gravityFlip",
+      "stats": { "speed": 3, "jump": 3, "kick": 4, "size": 4 },
+      "look": { "skin": "#a8714a", "face": "long", "hair": { "style": "none", "color": "#000" }, "beard": { "style": "goatee", "color": "#1a120c" }, "brows": "normal", "eyes": "#1d120a", "nose": "normal", "mouth": "smirk", "liner": true, "accessory": { "type": "nemes", "color": "#e7b928", "color2": "#1f4fa8" } }
+    },
+    {
+      "id": "el-maestro", "name": "El Maestro", "skill": "fireball",
+      "stats": { "speed": 3, "jump": 3, "kick": 5, "size": 3 },
+      "look": { "skin": "#d9a066", "face": "oval", "hair": { "style": "sidepart", "color": "#3c3c3c" }, "beard": { "style": "mustache", "color": "#3c3c3c" }, "brows": "thick", "eyes": "#4a2c12", "nose": "big", "mouth": "smile", "accessory": { "type": "none" } }
+    },
+    {
+      "id": "rocket-rami", "name": "Rocket Rami", "skill": "multiBall",
+      "stats": { "speed": 5, "jump": 4, "kick": 3, "size": 2 },
+      "look": { "skin": "#c68642", "face": "round", "hair": { "style": "spiky", "color": "#1a1a1a", "tips": "#ff4d2d" }, "beard": { "style": "none" }, "brows": "normal", "eyes": "#3a2412", "nose": "small", "mouth": "teeth", "accessory": { "type": "none" } }
+    },
+    {
+      "id": "atlas-lion", "name": "Atlas Lion", "skill": "earthquake",
+      "stats": { "speed": 3, "jump": 4, "kick": 4, "size": 3 },
+      "look": { "skin": "#b07a4a", "face": "square", "hair": { "style": "mane", "color": "#6b3f1d" }, "beard": { "style": "full", "color": "#5a3418" }, "brows": "thick", "eyes": "#2a1608", "nose": "big", "mouth": "open", "accessory": { "type": "none" } }
+    },
+    {
+      "id": "nova", "name": "Nova", "skill": "magnet",
+      "stats": { "speed": 4, "jump": 5, "kick": 3, "size": 2 },
+      "look": { "skin": "#ffdbac", "face": "oval", "hair": { "style": "ponytail", "color": "#c2401c" }, "beard": { "style": "none" }, "brows": "thin", "eyes": "#3f8a4a", "nose": "small", "mouth": "smile", "freckles": true, "lashes": true, "accessory": { "type": "sweatband", "color": "#2fd1c4" } }
+    },
+    {
+      "id": "the-professor", "name": "The Professor", "skill": "reverseControls",
+      "stats": { "speed": 3, "jump": 3, "kick": 5, "size": 3 },
+      "look": { "skin": "#f3d1b0", "face": "long", "hair": { "style": "bald", "color": "#cfcfcf" }, "beard": { "style": "mustache", "color": "#e8e8e8" }, "brows": "thick", "eyes": "#4a6a8a", "nose": "big", "mouth": "smile", "accessory": { "type": "glasses", "color": "#2a2a2a" } }
+    },
+    {
+      "id": "tidal", "name": "Tidal", "skill": "freeze",
+      "stats": { "speed": 4, "jump": 5, "kick": 3, "size": 2 },
+      "look": { "skin": "#5c3a21", "face": "oval", "hair": { "style": "dreads", "color": "#141010", "beads": "#f2c230" }, "beard": { "style": "goatee", "color": "#141010" }, "brows": "normal", "eyes": "#2a160a", "nose": "round", "mouth": "teeth", "accessory": { "type": "none" } }
+    },
+    {
+      "id": "captain-carthage", "name": "Captain Carthage", "skill": "shrink",
+      "stats": { "speed": 3, "jump": 3, "kick": 4, "size": 4 },
+      "look": { "skin": "#c08a5b", "face": "square", "hair": { "style": "bun", "color": "#120e0c" }, "beard": { "style": "full", "color": "#120e0c" }, "brows": "thick", "eyes": "#2b1a0e", "nose": "normal", "mouth": "smirk", "accessory": { "type": "headband", "color": "#e70013" } }
+    },
+    {
+      "id": "blitz", "name": "Blitz", "skill": "bigBall",
+      "stats": { "speed": 4, "jump": 4, "kick": 4, "size": 2 },
+      "look": { "skin": "#e6b98f", "face": "round", "hair": { "style": "mohawk", "color": "#2f8cff" }, "beard": { "style": "none" }, "brows": "angry", "eyes": "#2a2a2a", "nose": "small", "mouth": "teeth", "accessory": { "type": "earring", "color": "#ffd23d" } }
+    }
+  ]
+}
