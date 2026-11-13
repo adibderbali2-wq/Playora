@@ -39,7 +39,7 @@
     {
       "id": "rocket-rami", "name": "Rocket Rami", "skill": "multiBall",
       "stats": { "speed": 5, "jump": 4, "kick": 3, "size": 2 },
-      "look": { "skin": "#c68642", "face": "round", "hair": { "style": "spiky", "color": "#1a1a1a", "tips": "#ff4d2d" }, "beard": { "style": "none" }, "brows": "normal", "eyes": "#3a2412", "nose": "small", "mouth": "teeth", "accessory": { "type": "none" } }
+      "look": { "skin": "#c68642", "face": "round", "hair": { "style": "spiky", "color": "#1a1a1a", "tips": "#ff4d2d" }, "beard": { "style": "none" }, "brows": "normal", "eyes": "#3a2412", "nose": "small", "mouth": "grin", "accessory": { "type": "none" } }
     },
     {
       "id": "atlas-lion", "name": "Atlas Lion", "skill": "earthquake",

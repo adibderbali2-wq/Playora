@@ -1,0 +1,24 @@
+<!doctype html><meta charset="utf-8"><title>Head Cup dev</title>
+<body style="margin:0;background:#000;display:grid;place-items:center;height:100vh">
+<canvas id="c" style="width:min(100vw,177.78vh);height:min(100vh,56.25vw)"></canvas>
+<script type="module">
+import { Game, startLoop } from '../src/game.js';
+import { parseRoster } from '../src/characters.js';
+import { Renderer } from '../src/renderer.js';
+import { Effects } from '../src/effects.js';
+import { Input } from '../src/input.js';
+import { TEAM_BY_ID } from '../src/teams.js';
+const q = new URLSearchParams(location.search);
+const roster = parseRoster(await (await fetch('../characters.json')).json());
+const ch = (id) => roster.find((c) => c.id === id);
+const canvas = document.getElementById('c');
+const r = new Renderer(canvas); const fx = new Effects(); const input = new Input();
+const fit = () => { const b = canvas.getBoundingClientRect(); r.resize(b.width, b.height, Math.min(2, devicePixelRatio)); }; fit(); addEventListener('resize', fit);
+const team = (id) => ({ flag: id, kit: TEAM_BY_ID[id].kit });
+const g = new Game({ teams: [
+  { ...team(q.get('t1') || 'tunisia'), players: [{ char: ch(q.get('a') || 'captain-carthage'), controller: q.get('ca') || 'kb1', skill: q.get('sa') }] },
+  { ...team(q.get('t2') || 'brazil'), players: [{ char: ch(q.get('b') || 'samba-king'), controller: q.get('cb') || 'kb2', skill: q.get('sb') }] },
+], time: 60, emit: (t, d) => { if (t === 'goal') { fx.show('GOOOAL!'); fx.confetti(d.x, d.y, ['#e70013','#fff','#ffdc02','#3ddcff']); fx.addShake(16); } if (t === 'kick') fx.sparks(d.x, d.y, '#fff', 8); if (t === 'skill') { fx.ring(d.x, d.y - 80, d.color, 120, 8); } } });
+window.g = g;
+startLoop({ update: (s) => { for (const p of g.players) if (p.controller !== 'ai') input.read(p.controller, p.input); g.update(s); fx.update(s); }, render: (a, dt) => r.draw(g, fx, a, { dt }) });
+</script>

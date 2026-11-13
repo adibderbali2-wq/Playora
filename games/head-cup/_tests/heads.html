@@ -1,0 +1,17 @@
+<!doctype html><meta charset="utf-8"><title>Head preview</title>
+<body style="margin:0;background:#1b1238">
+<canvas id="c" width="1400" height="760"></canvas>
+<script type="module">
+import { parseRoster } from '../src/characters.js';
+import { drawHead } from '../src/heads.js';
+const roster = parseRoster(await (await fetch('../characters.json')).json());
+const ctx = document.getElementById('c').getContext('2d');
+ctx.font = '700 16px system-ui'; ctx.textAlign = 'center'; ctx.fillStyle = '#fff';
+const emotions = ['normal', 'happy', 'sad', 'effort'];
+roster.forEach((ch, i) => {
+  const x = 100 + (i % 7) * 200, y = 150 + Math.floor(i / 7) * 330;
+  drawHead(ctx, ch, x, y, 70, { facing: 1, look: { x: 0.6, y: 0.1 }, emotion: 'normal' });
+  ctx.fillStyle = '#fff'; ctx.fillText(ch.name, x, y + 120);
+  emotions.slice(1).forEach((e, k) => drawHead(ctx, ch, x - 60 + k * 60, y + 175, 24, { facing: -1, emotion: e }));
+});
+</script>

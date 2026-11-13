@@ -200,3 +200,21 @@ function makePlayer(id, team, slot, teamSize, cfg, teamCfg) {
 }
 
 export { parts, BODY };
+
+/**
+ * Browser frame loop: fixed-timestep physics with interpolated rendering.
+ * update(step) runs 0..n times per frame; render(alpha, dt) gets the interpolation factor.
+ */
+export function startLoop({ update, render }) {
+  let acc = 0, last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.1, (now - last) / 1000); last = now;
+    acc += dt;
+    let n = 0;
+    while (acc >= STEP && n < 12) { update(STEP); acc -= STEP; n++; }
+    if (n === 12) acc = 0; // tab was frozen: drop the backlog instead of fast-forwarding
+    render(acc / STEP, dt);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
