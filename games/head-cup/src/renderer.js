@@ -156,6 +156,7 @@ export class Renderer {
   /** alpha = interpolation factor between the previous and current physics step. */
   draw(game, fx, alpha, ui) {
     const ctx = this.ctx, k = this.scale;
+    ctx.direction = 'ltr'; // scores and timers never mirror in right-to-left languages
     if (!this.bg) this.buildBackground();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.drawImage(this.bg, 0, 0);
@@ -176,7 +177,7 @@ export class Renderer {
     fx.draw(ctx);
     ctx.setTransform(k, 0, 0, k, 0, 0);
     if (fx.flash > 0) { ctx.globalAlpha = fx.flash * 0.6; ctx.fillStyle = fx.flashColor; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1; }
-    this.drawHud(ctx, game, ui);
+    if (ui.hud !== false) this.drawHud(ctx, game, ui);
     this.drawBanner(ctx, fx.banner);
     this.t += ui.dt || 0;
   }
@@ -350,7 +351,7 @@ export class Renderer {
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     panel(ctx, W / 2 - 74, 12, 148, 70, 16, '#ff7a1a', '#ffd23d');
     ctx.fillStyle = '#fff'; ctx.font = `800 13px ${FONT}`;
-    ctx.fillText(game.golden ? t('golden') : t('time'), W / 2, 30);
+    ctx.fillText(game.golden ? t('golden') : t('time_'), W / 2, 30);
     const secs = Math.ceil(game.clock);
     ctx.font = `900 32px ${FONT}`;
     ctx.fillStyle = secs <= 10 && game.phase === 'play' && !game.golden && Math.floor(this.t * 4) % 2 ? '#1d1230' : '#fff';

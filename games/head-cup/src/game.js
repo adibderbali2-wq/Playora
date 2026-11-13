@@ -142,7 +142,7 @@ export class Game {
   onGoal(team, ball) {
     this.score[team]++;
     const scorer = this.players.find((p) => p.id === ball.lastTouch);
-    if (scorer) scorer.goals++;
+    if (scorer) { if (scorer.team === team) scorer.goals++; else scorer.ownGoals++; }
     for (const p of this.players) { p.emotion = p.team === team ? 'happy' : 'sad'; p.emotionT = MATCH.celebrateTime; }
     this.lastGoal = { team, x: ball.x, y: ball.y, scorer: scorer ? scorer.id : null, own: scorer ? scorer.team !== team : false };
     this.world.shake = 18;
@@ -195,7 +195,7 @@ function makePlayer(id, team, slot, teamSize, cfg, teamCfg) {
     jumpBuffer: 0, kick: { t: 0, hit: false }, legAngle: 0.15,
     frozen: 0, stun: 0, reversed: 0, shrunk: 0,
     mods: { speedMul: 1, kickMul: 1, jumpMul: 1 },
-    emotion: 'normal', emotionT: 0, goals: 0,
+    emotion: 'normal', emotionT: 0, goals: 0, ownGoals: 0, tag: cfg.tag || '',
   };
 }
 

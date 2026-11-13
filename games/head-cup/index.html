@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
+<title>HEAD CUP - PLAYORA</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="style.css">
+<link rel="modulepreload" href="src/main.js">
+</head>
+<body>
+<div id="stage">
+  <canvas id="game" aria-label="HEAD CUP pitch"></canvas>
+
+  <!-- always-available corner buttons -->
+  <div class="corner left">
+    <button id="btnMute" class="round" aria-label="Mute">🔊</button>
+  </div>
+  <div class="corner right">
+    <button id="btnPause" class="round" aria-label="Pause" hidden>❚❚</button>
+    <button id="btnFull" class="round" aria-label="Fullscreen">⛶</button>
+  </div>
+
+  <!-- key hints shown at kick-off -->
+  <div id="hints" hidden>
+    <div class="hint" id="hintP1"></div>
+    <div class="hint" id="hintP2"></div>
+  </div>
+
+  <!-- touch controls -->
+  <div id="touch" hidden>
+    <div class="pad" data-c="kb1">
+      <div class="moves"><button data-c="kb1" data-a="left">◀</button><button data-c="kb1" data-a="right">▶</button></div>
+      <div class="acts"><button data-c="kb1" data-a="skill" class="sk">★</button><button data-c="kb1" data-a="jump">▲</button><button data-c="kb1" data-a="kick" class="kk">⚽</button></div>
+    </div>
+    <div class="pad two" data-c="kb2">
+      <div class="acts"><button data-c="kb2" data-a="kick" class="kk">⚽</button><button data-c="kb2" data-a="jump">▲</button><button data-c="kb2" data-a="skill" class="sk">★</button></div>
+      <div class="moves"><button data-c="kb2" data-a="left">◀</button><button data-c="kb2" data-a="right">▶</button></div>
+    </div>
+  </div>
+
+  <section class="screen show" id="loading">
+    <div class="logo"><span>HEAD</span><span>CUP</span></div>
+    <div class="bar"><i id="loadBar"></i></div>
+    <p data-i18n="loading">Warming up…</p>
+  </section>
+
+  <section class="screen" id="title">
+    <div class="logo big"><span>HEAD</span><span>CUP</span></div>
+    <p class="tagline" data-i18n="tagline"></p>
+    <button class="press" id="pressStart" data-i18n="pressStart"></button>
+  </section>
+
+  <section class="screen" id="menu">
+    <div class="logo small"><span>HEAD</span><span>CUP</span></div>
+    <nav class="modes nav">
+      <button data-mode="1p" class="mode"><b data-i18n="onePlayer"></b><small data-i18n="vsCpu"></small></button>
+      <button data-mode="2p" class="mode primary"><b data-i18n="twoPlayers"></b><small data-i18n="vsFriend"></small></button>
+      <button data-mode="2v2" class="mode"><b data-i18n="twoVsTwo"></b><small data-i18n="teamMode"></small></button>
+    </nav>
+    <nav class="row nav">
+      <button data-go="settings" class="pill" data-i18n="settings"></button>
+      <button data-go="howto" class="pill" data-i18n="howTo"></button>
+      <a href="/" target="_top" class="pill ghost" data-i18n="backPlayora"></a>
+    </nav>
+    <div class="langs" id="langs"></div>
+  </section>
+
+  <section class="screen" id="select">
+    <h2 data-i18n="chooseFighter"></h2>
+    <div class="cards" id="cards"></div>
+    <div class="row">
+      <button class="pill" data-back data-i18n="back"></button>
+    </div>
+  </section>
+
+  <section class="screen" id="setup">
+    <h2 data-i18n="matchSettings"></h2>
+    <div class="opts nav" id="setupOpts"></div>
+    <div class="row nav">
+      <button class="pill" data-back data-i18n="back"></button>
+      <button class="pill primary big" id="btnPlay" data-i18n="play"></button>
+    </div>
+  </section>
+
+  <section class="screen scroll" id="howto">
+    <h2 data-i18n="howTo"></h2>
+    <div class="how">
+      <div class="panel"><h3 data-i18n="controlsTitle"></h3><div id="howKeys"></div><p class="small" data-i18n="gamepadHint"></p></div>
+      <div class="panel"><h3 data-i18n="modesTitle"></h3><p data-i18n="rules"></p>
+        <ul><li><b data-i18n="onePlayer"></b> — <span data-i18n="vsCpu"></span></li><li><b data-i18n="twoPlayers"></b> — <span data-i18n="vsFriend"></span></li><li><b data-i18n="twoVsTwo"></b> — <span data-i18n="teamMode"></span></li></ul></div>
+      <div class="panel wide"><h3 data-i18n="skillsTitle"></h3><div class="skills" id="howSkills"></div></div>
+    </div>
+    <div class="row nav"><button class="pill" data-back data-i18n="back"></button></div>
+  </section>
+
+  <section class="screen" id="settings">
+    <h2 data-i18n="settings"></h2>
+    <div class="opts nav" id="settingsOpts"></div>
+    <div class="row nav"><button class="pill" data-back data-i18n="back"></button></div>
+  </section>
+
+  <section class="screen dim" id="pause">
+    <h2 data-i18n="pause"></h2>
+    <nav class="col nav">
+      <button class="pill primary" id="btnResume" data-i18n="resume"></button>
+      <button class="pill" id="btnRestart" data-i18n="restart"></button>
+      <button class="pill" data-go="settings" data-i18n="settings"></button>
+      <button class="pill" data-go="howto" data-i18n="howTo"></button>
+      <button class="pill" id="btnQuit" data-i18n="quit"></button>
+    </nav>
+  </section>
+
+  <section class="screen dim" id="results">
+    <p class="kicker" data-i18n="finalScore"></p>
+    <h2 id="resTitle"></h2>
+    <canvas id="resCanvas" width="900" height="300"></canvas>
+    <div id="resScorers" class="small"></div>
+    <nav class="row nav">
+      <button class="pill primary" id="btnRematch" data-i18n="rematch"></button>
+      <button class="pill" id="btnChange" data-i18n="changePlayers"></button>
+      <button class="pill" id="btnMenu" data-i18n="quit"></button>
+    </nav>
+  </section>
+</div>
+<noscript><p style="color:#fff;font-family:system-ui;padding:20px">HEAD CUP needs JavaScript.</p></noscript>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

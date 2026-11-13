@@ -30,6 +30,12 @@ export class Input {
 
   /** Fill `target` from a controller id: 'kb1' | 'kb2' | 'pad0'..'pad3'. */
   read(controller, target) {
+    if (controller && controller.includes('+')) { // e.g. 'kb1+pad0': keyboard OR gamepad
+      const tmp = {};
+      for (const k of ACTIONS) target[k] = false;
+      for (const c of controller.split('+')) { this.read(c, tmp); for (const k of ACTIONS) target[k] = target[k] || tmp[k]; }
+      return;
+    }
     if (controller === 'kb1' || controller === 'kb2') {
       const map = KEYS[controller === 'kb1' ? 'p1' : 'p2'], t = this.touch[controller];
       for (const a of ACTIONS) target[a] = map[a].some((c) => this.keys.has(c)) || t[a] > 0;
