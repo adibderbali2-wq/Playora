@@ -1,6 +1,6 @@
 # PLAYORA — Claude notes
 
-Static browser-games site. Plain HTML/CSS/JS, Node ≥18 build script, **no npm deps**. Hosted on Cloudflare Workers (static assets) at https://playora.adibderbali2.workers.dev, auto-deployed from GitHub `main` (build `npm run build`, output `dist/`).
+Static browser-games site. Plain HTML/CSS/JS, Node ≥18 build script, **no npm deps**. Hosted on Cloudflare Workers (static assets) at https://playora.playoragames.workers.dev, auto-deployed from GitHub `main` (build `npm run build`, output `dist/`).
 
 ## Token rules
 - Don't read `dist/` (generated), `Claude outputs/`, fonts/images, or other games' `index.html` unless the task is about them.
