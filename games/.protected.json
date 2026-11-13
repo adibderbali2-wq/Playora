@@ -1,6 +1,10 @@
 {
   "_help": "Snapshot of protected games. Update only after an intended change: npm run guard -- --lock",
   "games": {
+    "chaos-duel": {
+      "status": "playable",
+      "hash": "27f85332bec78092"
+    },
     "comet-catcher": {
       "status": "playable",
       "hash": "90a0c674de063f13"

@@ -20,6 +20,7 @@ Static browser-games site. Plain HTML/CSS/JS, Node ≥18 build script, **no npm 
 - `npm run build` → `dist/` (validates games.json, stops with clear errors)
 - `npm run check` → protected-games guard + internal link check (run after build)
 - `npm start` → build + serve on http://localhost:8080
+- `node games/chaos-duel/_tests/sim.test.mjs` → headless gameplay tests for Chaos Duel (folders starting `_` are not published)
 
 ## Adding a game (touch only these)
 1. Copy `games/_template/` → `games/<new-id>/` (id: lowercase, digits, dashes).

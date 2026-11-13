@@ -1,0 +1,114 @@
+{
+ "bruno": {
+  "frameWidth": 110,
+  "frameHeight": 92,
+  "anchorX": 55,
+  "anchorY": 91,
+  "animations": {
+   "idle": {
+    "file": "bruno/idle.png",
+    "frames": 8
+   },
+   "run": {
+    "file": "bruno/run.png",
+    "frames": 8
+   },
+   "jump": {
+    "file": "bruno/jump.png",
+    "frames": 6
+   },
+   "fall": {
+    "file": "bruno/fall.png",
+    "frames": 6
+   },
+   "normal_attack": {
+    "file": "bruno/normal_attack.png",
+    "frames": 5
+   },
+   "heavy_attack": {
+    "file": "bruno/heavy_attack.png",
+    "frames": 7
+   },
+   "dash": {
+    "file": "bruno/dash.png",
+    "frames": 5
+   },
+   "block": {
+    "file": "bruno/block.png",
+    "frames": 5
+   },
+   "hit": {
+    "file": "bruno/hit.png",
+    "frames": 5
+   },
+   "victory": {
+    "file": "bruno/victory.png",
+    "frames": 6
+   },
+   "defeat": {
+    "file": "bruno/defeat.png",
+    "frames": 5
+   },
+   "special": {
+    "file": "bruno/special.png",
+    "frames": 6
+   }
+  }
+ },
+ "zippy": {
+  "frameWidth": 102,
+  "frameHeight": 80,
+  "anchorX": 51,
+  "anchorY": 79,
+  "animations": {
+   "idle": {
+    "file": "zippy/idle.png",
+    "frames": 8
+   },
+   "run": {
+    "file": "zippy/run.png",
+    "frames": 7
+   },
+   "jump": {
+    "file": "zippy/jump.png",
+    "frames": 6
+   },
+   "fall": {
+    "file": "zippy/fall.png",
+    "frames": 6
+   },
+   "normal_attack": {
+    "file": "zippy/normal_attack.png",
+    "frames": 6
+   },
+   "heavy_attack": {
+    "file": "zippy/heavy_attack.png",
+    "frames": 6
+   },
+   "dash": {
+    "file": "zippy/dash.png",
+    "frames": 5
+   },
+   "block": {
+    "file": "zippy/block.png",
+    "frames": 5
+   },
+   "hit": {
+    "file": "zippy/hit.png",
+    "frames": 5
+   },
+   "victory": {
+    "file": "zippy/victory.png",
+    "frames": 6
+   },
+   "defeat": {
+    "file": "zippy/defeat.png",
+    "frames": 5
+   },
+   "special": {
+    "file": "zippy/special.png",
+    "frames": 7
+   }
+  }
+ }
+}

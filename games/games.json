@@ -2,6 +2,20 @@
   "_help": "PLAYORA game catalog. To add a game: 1) put its files in games/<id>/ (index.html + thumb.svg or thumb.webp) 2) add an entry below 3) push to GitHub. See ADDING-GAMES.md for every field.",
   "games": [
     {
+      "id": "chaos-duel",
+      "title": "Chaos Duel",
+      "description": "Two players, one keyboard, one arena gone wild. Pick Bruno the tank or Zippy the speedster and fight best of three while Chaos Events flip the rules: low gravity, ice, meteor rain, giant fists and a shrinking arena.",
+      "controls": "Player 1: A / D move, W jump, S block, F punch, G heavy, H special (H + direction to dash). Player 2: arrow keys to move, jump and block, K punch, L heavy, ; special. Esc pauses.",
+      "category": "multiplayer",
+      "tags": ["fighting", "2 players", "same keyboard", "versus", "chaos"],
+      "status": "playable",
+      "featured": true,
+      "popular": true,
+      "added": "2026-11-13",
+      "aspectRatio": "16:9",
+      "mobileFriendly": false
+    },
+    {
       "id": "comet-catcher",
       "title": "Comet Catcher",
       "description": "Steer your little star-ship across the night sky, scoop up glowing comets and dodge the falling space rocks. The longer you survive, the faster the sky gets. How high can your score climb?",

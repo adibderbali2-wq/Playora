@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
+<title>CHAOS DUEL - PLAYORA</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="style.css">
+<link rel="modulepreload" href="js/main.js">
+</head>
+<body>
+<div id="stage">
+  <canvas id="game" aria-label="CHAOS DUEL arena"></canvas>
+
+  <!-- Touch controls (shown on touch screens during a fight) -->
+  <div id="touch" hidden>
+    <div class="pad p1" data-player="0">
+      <div class="dpad">
+        <button data-p="0" data-a="up" aria-label="Jump">▲</button>
+        <button data-p="0" data-a="left" aria-label="Left">◀</button>
+        <button data-p="0" data-a="down" aria-label="Block">■</button>
+        <button data-p="0" data-a="right" aria-label="Right">▶</button>
+      </div>
+      <div class="acts">
+        <button data-p="0" data-a="attack" class="a1">PUNCH</button>
+        <button data-p="0" data-a="heavy" class="a2">HEAVY</button>
+        <button data-p="0" data-a="special" class="a3">SPECIAL</button>
+      </div>
+    </div>
+    <div class="pad p2" data-player="1">
+      <div class="acts">
+        <button data-p="1" data-a="attack" class="a1">PUNCH</button>
+        <button data-p="1" data-a="heavy" class="a2">HEAVY</button>
+        <button data-p="1" data-a="special" class="a3">SPECIAL</button>
+      </div>
+      <div class="dpad">
+        <button data-p="1" data-a="up" aria-label="Jump">▲</button>
+        <button data-p="1" data-a="left" aria-label="Left">◀</button>
+        <button data-p="1" data-a="down" aria-label="Block">■</button>
+        <button data-p="1" data-a="right" aria-label="Right">▶</button>
+      </div>
+    </div>
+  </div>
+  <button id="pauseBtn" class="pause-btn" hidden aria-label="Pause">❚❚</button>
+  <div id="freeBar" class="free-bar" hidden>
+    <button id="ffRestart">↻ Restart</button>
+    <button id="ffMenu">Main menu</button>
+  </div>
+
+  <!-- Loading -->
+  <section class="screen show" id="loading" aria-live="polite">
+    <div class="logo"><span class="l1">CHAOS</span><span class="l2">DUEL</span></div>
+    <div class="bar"><i id="loadBar"></i></div>
+    <p class="hint" id="loadText">Loading fighters…</p>
+  </section>
+
+  <!-- Title -->
+  <section class="screen" id="title">
+    <div class="logo big"><span class="l1">CHAOS</span><span class="l2">DUEL</span></div>
+    <p class="tagline">Two Players. One Arena. Total Chaos.</p>
+    <button class="press" id="pressStart">Press any key or tap to start</button>
+  </section>
+
+  <!-- Main menu -->
+  <section class="screen" id="menu">
+    <div class="side-logo"><div class="logo"><span class="l1">CHAOS</span><span class="l2">DUEL</span></div><p class="tagline">Two Players. One Arena. Total Chaos.</p></div>
+    <nav class="menu-list">
+      <button data-go="modes" class="primary">Play</button>
+      <button data-go="select">Character Select</button>
+      <button data-go="howto">How to Play</button>
+      <button data-go="settings">Settings</button>
+      <a href="/" target="_top" class="ghost">← Back to PLAYORA</a>
+    </nav>
+  </section>
+
+  <!-- Mode select -->
+  <section class="screen" id="modes">
+    <h2>Choose a mode</h2>
+    <div class="modes menu-list row">
+      <button class="mode main" data-mode="chaos">
+        <span class="tag">Main mode</span>
+        <strong>Chaos Duel</strong>
+        <span>1 vs 1 on one keyboard. Every 15 seconds a Chaos Event rewrites the rules of the arena.</span>
+      </button>
+      <button class="mode" data-mode="classic">
+        <span class="tag">Pure skill</span>
+        <strong>Classic Duel</strong>
+        <span>1 vs 1, best of three rounds. No events, just you, your opponent and your fists.</span>
+      </button>
+      <button class="mode" data-mode="free">
+        <span class="tag">Jump right in</span>
+        <strong>Free Fight</strong>
+        <span>Bruno vs Zippy, right now. No rounds, no timer, no events. Fight until someone drops.</span>
+      </button>
+    </div>
+    <button class="back" data-back>← Back</button>
+  </section>
+
+  <!-- Character select -->
+  <section class="screen" id="select">
+    <h2><span id="selMode">Chaos Duel</span> · Choose your fighter</h2>
+    <div class="sel">
+      <div class="pick" data-player="0">
+        <div class="ptag p1">PLAYER 1</div>
+        <img class="banner" alt="">
+        <canvas class="preview" width="220" height="200"></canvas>
+        <div class="choices"></div>
+        <div class="info">
+          <div class="stats"></div>
+          <p class="special"></p>
+        </div>
+        <button class="ready-btn">Confirm</button>
+        <p class="keys"></p>
+      </div>
+      <div class="vs">VS</div>
+      <div class="pick" data-player="1">
+        <div class="ptag p2">PLAYER 2</div>
+        <img class="banner" alt="">
+        <canvas class="preview" width="220" height="200"></canvas>
+        <div class="choices"></div>
+        <div class="info">
+          <div class="stats"></div>
+          <p class="special"></p>
+        </div>
+        <button class="ready-btn">Confirm</button>
+        <p class="keys"></p>
+      </div>
+    </div>
+    <button class="back" data-back>← Back</button>
+  </section>
+
+  <!-- How to play -->
+  <section class="screen scroll" id="howto">
+    <h2>How to play</h2>
+    <div class="howto">
+      <div class="card">
+        <h3 class="p1c">Player 1</h3>
+        <table class="keys-table" id="keysP1"></table>
+      </div>
+      <div class="card">
+        <h3 class="p2c">Player 2</h3>
+        <table class="keys-table" id="keysP2"></table>
+      </div>
+      <div class="card wide">
+        <h3>The basics</h3>
+        <ul>
+          <li><b>Best of three:</b> both fighters start each round with 100 HP. Win two rounds to win the match. When the timer runs out, the healthier fighter takes the round.</li>
+          <li><b>Special button:</b> press it alone to use your special ability when its icon glows. Press it while holding left or right to <b>dash</b>.</li>
+          <li><b>Combos:</b> a punch that connects can chain into up to three punches. The third one sends your opponent flying.</li>
+          <li><b>Blocking</b> stops most damage but drains your guard bar (under your health). If it empties, your guard breaks and you're stunned.</li>
+          <li><b>Heavy attacks</b> knock down. A fighter getting up is briefly invulnerable, so no cheap pile-ons.</li>
+        </ul>
+      </div>
+      <div class="card wide">
+        <h3>The fighters</h3>
+        <div class="fighters" id="howFighters"></div>
+      </div>
+      <div class="card wide">
+        <h3>Chaos Events <small>(Chaos Duel mode)</small></h3>
+        <p>Every 15 seconds the arena breaks its own rules for a few seconds. A warning tells you what's coming 2.5 seconds early.</p>
+        <div class="events" id="howEvents"></div>
+      </div>
+    </div>
+    <button class="back" data-back>← Back</button>
+  </section>
+
+  <!-- Settings -->
+  <section class="screen" id="settings">
+    <h2>Settings</h2>
+    <div class="settings menu-list">
+      <label class="row">Music <input type="range" id="setMusic" min="0" max="100" step="5"><output id="outMusic"></output></label>
+      <label class="row">Sound effects <input type="range" id="setSfx" min="0" max="100" step="5"><output id="outSfx"></output></label>
+      <button class="row toggle" id="setShake">Screen shake: <b></b></button>
+      <button class="row toggle" id="setTouch">Touch controls: <b></b></button>
+      <button class="row toggle" id="setTime">Round time: <b></b></button>
+    </div>
+    <button class="back" data-back>← Back</button>
+  </section>
+
+  <!-- Pause -->
+  <section class="screen dim" id="pause">
+    <h2>Paused</h2>
+    <nav class="menu-list">
+      <button id="resume" class="primary">Resume</button>
+      <button id="restart">Restart match</button>
+      <button data-go="settings">Settings</button>
+      <button data-go="howto">How to Play</button>
+      <button id="quit">Main menu</button>
+    </nav>
+  </section>
+
+  <!-- Results -->
+  <section class="screen dim" id="results">
+    <div class="result">
+      <p class="kicker" id="resKicker">Match over</p>
+      <h2 id="resTitle">Player 1 wins!</h2>
+      <img id="resBanner" alt="">
+      <p class="score" id="resScore"></p>
+      <table class="res-stats" id="resStats"></table>
+      <nav class="menu-list row">
+        <button id="rematch" class="primary">Rematch</button>
+        <button data-go="select">Character Select</button>
+        <button id="toMenu">Main menu</button>
+      </nav>
+    </div>
+  </section>
+</div>
+<noscript><p style="color:#fff;font-family:system-ui;padding:20px">CHAOS DUEL needs JavaScript.</p></noscript>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
