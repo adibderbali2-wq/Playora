@@ -7,8 +7,23 @@
 //     onKick?(game, player, ball, state),// owner kicked a ball while active
 //     end?(game, player, state) }        // cleanup when the duration runs out (or on reset)
 // To add a skill: create a file here and add it to SKILL_MODULES below.
+import fireball from './fireball.js';
+import teleport from './teleport.js';
+import shrink from './shrink.js';
+import megaStrength from './megaStrength.js';
+import freeze from './freeze.js';
+import giantKeeper from './giantKeeper.js';
+import magnet from './magnet.js';
+import speedBoost from './speedBoost.js';
+import ghostBall from './ghostBall.js';
+import multiBall from './multiBall.js';
+import gravityFlip from './gravityFlip.js';
+import earthquake from './earthquake.js';
+import reverseControls from './reverseControls.js';
+import bigBall from './bigBall.js';
 
-export const SKILL_MODULES = [];
+export const SKILL_MODULES = [fireball, teleport, shrink, megaStrength, freeze, giantKeeper, magnet, speedBoost,
+  ghostBall, multiBall, gravityFlip, earthquake, reverseControls, bigBall];
 export const SKILLS = Object.fromEntries(SKILL_MODULES.map((s) => [s.id, s]));
 export const SKILL_IDS = SKILL_MODULES.map((s) => s.id);
 
@@ -42,9 +57,14 @@ export class SkillSystem {
 
   update(dt) {
     const g = this.game;
+    for (const b of g.balls) {
+      b.fire = Math.max(0, b.fire - dt); b.ghost = Math.max(0, b.ghost - dt);
+      if (b.tornado > 0) { b.tornado -= dt; b.vy += Math.sin(g.time * 16) * 2600 * dt; b.spin = Math.sign(b.spin || 1) * 30; }
+    }
     for (const p of g.players) {
       const s = this.get(p);
       if (s.charge > 0) s.charge = Math.max(0, s.charge - dt);
+      p.aura = s.active ? s.def : null;
       if (!s.active) continue;
       s.t += dt;
       if (s.def.modify) s.def.modify(g, p, p.mods, s);
