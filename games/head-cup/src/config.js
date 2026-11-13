@@ -29,11 +29,12 @@ export const PHYS = {
 // Player body proportions (multiplied by the character's size and temporary shrink effects)
 export const BODY = {
   headR: 44, // big cartoon head
-  neck: 52, // feet -> head centre distance is neck + headR*0.75
-  bodyR: 22,
+  neck: 80, // feet -> head centre distance is neck + headR*0.75
+  bodyR: 24,
+  bodyY: 52, // torso collider centre above the feet
   footR: 14,
-  legLen: 38,
-  hipY: 30,
+  legLen: 34,
+  hipY: 32,
 };
 
 export const MATCH = {

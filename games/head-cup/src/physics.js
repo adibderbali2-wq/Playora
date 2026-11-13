@@ -124,7 +124,7 @@ export function parts(p) {
   const s = p.size * p.scale;
   const headR = BODY.headR * s;
   const headY = p.y - (BODY.neck * Math.max(0.7, s) + headR * 0.75);
-  const bodyY = p.y - BODY.bodyR * Math.max(0.7, s) - 6;
+  const bodyY = p.y - BODY.bodyY * Math.max(0.7, s);
   const hipX = p.x + p.facing * 4, hipY = p.y - BODY.hipY * Math.max(0.7, s);
   const a = p.legAngle;
   const L = BODY.legLen * Math.max(0.75, s);
