@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>NIGHT SHIFT: The Abandoned Hospital - PLAYORA</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">{ "imports": { "three": "./assets/lib/three.module.min.js" } }</script>
+</head>
+<body>
+<div id="stage">
+  <canvas id="view" aria-label="NIGHT SHIFT game view"></canvas>
+  <div id="grain"></div>
+  <div id="hurt"></div>
+  <div id="flashout"></div>
+
+  <!-- HUD -->
+  <div id="hud" hidden>
+    <div id="objective"><span class="tag" id="chTag">CHAPTER I</span><span id="objText"></span></div>
+    <div id="crosshair"></div>
+    <div id="prompt" hidden></div>
+    <div id="hint" hidden></div>
+    <div id="toast"></div>
+    <div id="dmgDirs"></div>
+    <div class="hud-bl">
+      <div class="stat">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9z"/></svg>
+        <div class="bar hp"><i id="hpBar"></i></div>
+        <span id="hpTxt">100</span>
+      </div>
+      <div class="stat" id="batStat">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M7 7h9l3 3v4l-3 3H7a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zm1 3v4h6v-4z"/></svg>
+        <div class="bar bat"><i id="batBar"></i></div>
+        <span id="batTxt">--</span>
+      </div>
+      <div class="stat stam"><div class="bar stamina"><i id="stamBar"></i></div></div>
+      <div id="medTxt" class="small"></div>
+    </div>
+    <div class="hud-br" id="ammoBox" hidden>
+      <div id="ammo"><b id="ammoMag">0</b><span>/</span><em id="ammoRes">0</em></div>
+      <div id="reload" hidden><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" class="track"/><circle cx="20" cy="20" r="16" id="reloadRing" class="ring"/></svg><span>RELOADING</span></div>
+      <div id="reloadHint" class="small" hidden>Press R to reload</div>
+    </div>
+  </div>
+
+  <!-- chapter title card -->
+  <div id="chapter" hidden><div class="chn" id="chNum"></div><div class="cht" id="chTitle"></div><div class="chs" id="chSub"></div></div>
+
+  <!-- loading -->
+  <section class="screen show" id="loading">
+    <div class="logo"><h1>NIGHT SHIFT</h1><h2>THE ABANDONED HOSPITAL</h2></div>
+    <div class="bar load"><i id="loadBar"></i></div>
+    <p id="loadTxt">Preparing the ward…</p>
+  </section>
+
+  <!-- main menu -->
+  <section class="screen" id="menu">
+    <div class="menu-inner">
+      <div class="logo big"><h1 data-glitch="NIGHT SHIFT">NIGHT SHIFT</h1><h2>THE ABANDONED HOSPITAL</h2></div>
+      <nav class="mbtns">
+        <button data-act="new">NEW GAME</button>
+        <button data-act="continue" id="btnContinue">CONTINUE</button>
+        <button data-act="settings">SETTINGS</button>
+        <button data-act="howto">HOW TO PLAY</button>
+      </nav>
+      <p class="warn">Contains graphic violence, gore and intense jump scares. Best with headphones.</p>
+    </div>
+  </section>
+
+  <!-- settings -->
+  <section class="screen" id="settings">
+    <div class="panel">
+      <h3>SETTINGS</h3>
+      <label>Master volume <input type="range" id="sMaster" min="0" max="1" step="0.05"></label>
+      <label>Sound effects <input type="range" id="sSfx" min="0" max="1" step="0.05"></label>
+      <label>Music &amp; ambience <input type="range" id="sMusic" min="0" max="1" step="0.05"></label>
+      <label>Mouse sensitivity <input type="range" id="sSens" min="0.2" max="3" step="0.05"></label>
+      <label>Brightness <input type="range" id="sBright" min="0" max="2" step="0.1"></label>
+      <label>Graphics quality
+        <select id="sQuality"><option value="low">Low (fast)</option><option value="medium">Medium</option><option value="high">High</option></select>
+      </label>
+      <label>Difficulty
+        <select id="sDiff"><option value="easy">Easy — less damage</option><option value="normal">Normal</option></select>
+      </label>
+      <label class="row">Invert mouse Y <input type="checkbox" id="sInvert"></label>
+      <div class="pbtns"><button id="btnFull">TOGGLE FULLSCREEN</button><button data-act="back">BACK</button></div>
+    </div>
+  </section>
+
+  <!-- how to play -->
+  <section class="screen" id="howto">
+    <div class="panel wide">
+      <h3>HOW TO PLAY</h3>
+      <p>You wake inside St. Aldric Memorial Hospital. The power is almost gone and the patients are no longer patients. Find keys, unlock your way through four chapters and escape.</p>
+      <div class="keys">
+        <div><kbd>W A S D</kbd> Move</div><div><kbd>Mouse</kbd> Look</div>
+        <div><kbd>Shift</kbd> Sprint (makes noise)</div><div><kbd>Space</kbd> Jump</div>
+        <div><kbd>E</kbd> Interact / pick up</div><div><kbd>F</kbd> Flashlight</div>
+        <div><kbd>Left click</kbd> Shoot</div><div><kbd>R</kbd> Reload</div>
+        <div><kbd>H</kbd> Use medkit</div><div><kbd>Tab</kbd> Inventory &amp; notes</div>
+        <div><kbd>Esc</kbd> Pause</div>
+      </div>
+      <ul class="tips">
+        <li><b>Walkers</b> shamble slowly. <b>Runners</b> lie dormant until you get close or make noise — then they sprint. <b>L-09</b>… don't let it reach you.</li>
+        <li>The infected hunt by <b>sound</b> and <b>light</b>. Gunshots and sprinting carry far. A lit flashlight is seen from further away.</li>
+        <li>Headshots kill instantly. Ammo is scarce.</li>
+        <li>Your progress is saved at the start of each chapter. Use CONTINUE to return.</li>
+      </ul>
+      <div class="pbtns"><button data-act="back">BACK</button></div>
+    </div>
+  </section>
+
+  <!-- pause -->
+  <section class="screen" id="pause">
+    <div class="panel">
+      <h3>PAUSED</h3>
+      <div class="mbtns col">
+        <button data-act="resume">RESUME</button>
+        <button data-act="checkpoint">RESTART FROM CHECKPOINT</button>
+        <button data-act="settings">SETTINGS</button>
+        <button data-act="howto">HOW TO PLAY</button>
+        <button data-act="quit">QUIT TO MAIN MENU</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- inventory -->
+  <section class="screen" id="inventory">
+    <div class="panel wide">
+      <h3>INVENTORY</h3>
+      <div class="inv-grid" id="invGrid"></div>
+      <h4>DOCUMENTS <span id="docCount"></span></h4>
+      <div id="docList" class="doclist"></div>
+      <div class="pbtns"><button data-act="resume">CLOSE (TAB)</button></div>
+    </div>
+  </section>
+
+  <!-- document reader -->
+  <section class="screen" id="reader">
+    <div class="paper"><h3 id="docTitle"></h3><pre id="docText"></pre><button data-act="closeDoc">CLOSE (E)</button></div>
+  </section>
+
+  <!-- death -->
+  <section class="screen" id="dead">
+    <div class="center"><h1 class="red">YOU DIED</h1><p id="deadTip"></p>
+      <div class="mbtns col"><button data-act="checkpoint">LOAD CHECKPOINT</button><button data-act="quit">MAIN MENU</button></div></div>
+  </section>
+
+  <!-- victory -->
+  <section class="screen" id="victory">
+    <div class="center"><h2 class="dim">YOU ESCAPED</h2><h1>NIGHT SHIFT</h1>
+      <p class="story">The loading bay doors grind open into cold air and sodium light. Behind you, St. Aldric goes quiet. Somewhere past the quarantine fence, a phone is ringing — they'll want to know what Halvorsen did here. You have the documents.</p>
+      <div id="stats" class="stats"></div>
+      <div class="mbtns col"><button data-act="quit">MAIN MENU</button></div></div>
+  </section>
+
+  <!-- click to resume pointer lock -->
+  <div id="lockMsg" hidden>Click to continue</div>
+
+  <section class="screen" id="error">
+    <div class="center"><h2>Could not start the game</h2><p id="errText"></p></div>
+  </section>
+</div>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

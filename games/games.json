@@ -2,6 +2,20 @@
   "_help": "PLAYORA game catalog. To add a game: 1) put its files in games/<id>/ (index.html + thumb.svg or thumb.webp) 2) add an entry below 3) push to GitHub. See ADDING-GAMES.md for every field.",
   "games": [
     {
+      "id": "night-shift",
+      "title": "NIGHT SHIFT: The Abandoned Hospital",
+      "description": "A first-person 3D horror survival game. You wake inside a dark, abandoned hospital overrun by the infected. With a failing flashlight and a pistol, explore wards, operating rooms and a secret underground lab across four chapters, fight walkers, runners and worse, uncover the truth behind the outbreak and escape alive.",
+      "controls": "WASD to move, mouse to look (click to lock the mouse), Shift to sprint, Space to jump, E to interact, F flashlight, left click to shoot, R to reload, H to use a medkit, Tab for inventory and notes, Esc to pause. Headphones recommended.",
+      "category": "action",
+      "tags": ["horror", "zombie", "3d", "first person", "survival", "shooter", "fps", "story"],
+      "status": "playable",
+      "featured": true,
+      "popular": true,
+      "added": "2026-11-14",
+      "aspectRatio": "16:9",
+      "mobileFriendly": false
+    },
+    {
       "id": "head-cup",
       "title": "Head Cup",
       "description": "Big heads, big goals. Pick one of 14 original players and a national team, choose one of 14 wild skills like Fireball, Freeze or Giant Keeper, and play 1 vs CPU, 2 players on one keyboard, or 2 vs 2.",

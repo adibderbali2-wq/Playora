@@ -1,6 +1,10 @@
 {
   "_help": "Snapshot of protected games. Update only after an intended change: npm run guard -- --lock",
   "games": {
+    "night-shift": {
+      "status": "playable",
+      "hash": "5b9317318314d90c"
+    },
     "head-cup": {
       "status": "playable",
       "hash": "d77a0b8e81b0e129"
