@@ -255,6 +255,15 @@ function seoDescription(text, suffix = '', max = 160) {
   return out + suffix;
 }
 
+/** Social preview image for a game: games/<id>/og.png, else src/assets/img/og/<id>.jpg (raster copy of an
+ *  SVG thumbnail), else the thumbnail itself when it's a format social networks accept, else the site image. */
+function gameOgImage(g) {
+  if (fs.existsSync(path.join(ROOT, `games/${g.id}/og.png`))) return `/games/${g.id}/og.png`;
+  if (fs.existsSync(path.join(SRC, `assets/img/og/${g.id}.jpg`))) return `/assets/img/og/${g.id}.jpg`;
+  if (/.(png|jpe?g|webp)$/i.test(g.thumbnail) && g.thumbnail.startsWith('/')) return g.thumbnail;
+  return undefined;
+}
+
 function layout({ title, description, canonical, body, active = '', ogImage, ogType = 'website', scripts = [], jsonLd, noindex = false, bodyClass = '' }) {
   const fullTitle = title ? `${title} | ${site.name}` : `${site.name} - Free Browser Games, No Download, No Sign-up`;
   const desc = description || site.description;
@@ -284,6 +293,7 @@ ${noindex ? '<meta name="robots" content="noindex">' : ''}
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${esc(canon)}">
 <meta property="og:image" content="${esc(image)}">
+<meta property="og:image:alt" content="${esc(fullTitle)}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(fullTitle)}">
 <meta name="twitter:description" content="${esc(desc)}">
@@ -712,7 +722,7 @@ function buildGamePages() {
         title: g.playable ? `${g.title} - Free Online ${catBySlug[g.category].name} Game` : `${g.title} - ${catBySlug[g.category].name} Game (Coming Soon)`,
         description: seoDescription(g.description, g.playable ? ' Play free in your browser, no download, no sign-up.' : ''),
         canonical: g.pageUrl,
-        ogImage: fs.existsSync(path.join(ROOT, `games/${g.id}/og.png`)) ? `/games/${g.id}/og.png` : undefined,
+        ogImage: gameOgImage(g),
         body,
         active: 'games',
         scripts: g.playable ? ['/assets/js/player.js'] : [],
@@ -834,7 +844,7 @@ function buildMeta() {
   const urls = [
     ['/', today, '1.0'], ['/games/', today, '0.9'], ['/categories/', today, '0.8'],
     ...categories.map((c) => [`/category/${c.slug}/`, today, '0.8']),
-    ...games.map((g) => [g.pageUrl, g.added, g.playable ? '0.9' : '0.4']),
+    ...games.filter((g) => g.playable).map((g) => [g.pageUrl, g.added, '0.9']), // Coming Soon pages are left out
     ['/about/', today, '0.4'], ['/contact/', today, '0.3'], ['/privacy/', today, '0.2'], ['/terms/', today, '0.2'],
   ];
   write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
